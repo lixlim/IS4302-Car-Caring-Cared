@@ -1,5 +1,5 @@
-var SimpleStorage = artifacts.require("./SimpleStorage.sol");
+const Car = artifacts.require("Car");
+const CarNetwork = artifacts.require("CarNetwork");
 
-module.exports = function(deployer) {
-  deployer.deploy(SimpleStorage);
-};
+module.exports = function(deployer){
+}
