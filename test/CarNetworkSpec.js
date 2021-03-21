@@ -12,8 +12,8 @@ contract('CarNetwork', function (accounts) {
     var workshopAddress = accounts[4];
 
     beforeEach(async () => {
-        carInstance = await Car.new();
-        carNetworkInstance = await CarNetwork.new(carInstance.address, carNetworkHostAddress);
+        carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
+        carInstance = await Car.new(carNetworkInstance.address);
     });
 
     it("Register new Owner should work ", async () => {

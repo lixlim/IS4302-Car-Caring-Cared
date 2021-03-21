@@ -1,9 +1,7 @@
 pragma solidity ^0.5.0;
-import "./Car.sol";
 
 contract CarNetwork {
        
-    Car car;
     address admin;
     struct user {
         string role;
@@ -13,8 +11,7 @@ contract CarNetwork {
 
     event Register(address newAddress, string role);
 
-    constructor(Car car_Contract, address admin_Address) public {
-        car = car_Contract;
+    constructor(address admin_Address) public {
         admin = admin_Address;
     }
 
