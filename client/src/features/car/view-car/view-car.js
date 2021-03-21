@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "../../contracts/SimpleStorage.json";
-import getWeb3 from "../../getWeb3";
+import SimpleStorageContract from "../../../contracts/SimpleStorage.json";
+import getWeb3 from "../../../getWeb3";
 
-class Login extends Component {
+class ViewCar extends Component {
   state = { storageValue: 0, web3: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
@@ -52,7 +52,7 @@ class Login extends Component {
     }
     return (
       <div className="App">
-        <h1>Good to Go!</h1>
+        <h1>View Car</h1>
         <p>Your Truffle Box is installed and ready.</p>
         <h2>Smart Contract Example</h2>
         <p>
@@ -68,4 +68,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default ViewCar;
