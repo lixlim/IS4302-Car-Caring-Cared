@@ -23,6 +23,7 @@ const Login = () => {
     .then(async res => {
       if (res.user) {
         sessionStorage.setItem('isLoggedIn', 'true');
+        history.push(`/`);
       } else {
         alert("Please check your credentials");
       }

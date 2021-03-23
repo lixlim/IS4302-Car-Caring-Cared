@@ -62,7 +62,7 @@ class ViewCar extends Component {
         <p>
           Try changing the value stored on <strong>line 40</strong> of App.js.
         </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+        {/* <div>The stored value is: {this.state.storageValue}</div> */}
       </div>
     );
   }

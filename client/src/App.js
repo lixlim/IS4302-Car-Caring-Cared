@@ -5,41 +5,27 @@ import Homepage from './features/main/homepage';
 import ViewCar from './features/car/view-car';
 import firebase from "firebase/app";
 import firebaseConfig from "./firebase";
+import ProtectedRoute from "./features/main/protectedroute"
 
 class App extends Component {
 
   componentDidMount() {
     const firebaseInstance = firebase.initializeApp(firebaseConfig);
-    sessionStorage.setItem('isLoggedIn', 'false');
-    let isLoggedIn = firebase.auth().onAuthStateChanged(function (user) {
-      if (user) {
-        sessionStorage.setItem('isLoggedIn', 'true');
-        sessionStorage.setItem('username', user.email);
-      }
-    })
+    // let isLoggedIn = firebase.auth().onAuthStateChanged(function (user) {
+    //   if (user) {
+    //     sessionStorage.setItem('username', user.email);
+    //   }
+    // })
   }
 
   render() {
 
-    let routes;
-
-    if (sessionStorage.getItem('isLoggedIn') == 'true') {
-      routes = (<Switch>
-        <Route path='/home' component={Homepage} />
-        <Route path="/view-car" component={ViewCar} />
-        <Redirect to='/home' />
-      </Switch>)
-    } else {
-      routes = (<Switch>
-        <Route path='/login' component={Login} />
-        <Route exact path="/">
-          <Redirect to="/login" />
-        </Route>
-      </Switch>)
-    }
     return (
       <BrowserRouter>
-        {routes}
+        <Route path='/login' component={Login} />
+        <ProtectedRoute exact={true} path="/" component={Homepage} />
+        <ProtectedRoute path="/view-car" component={ViewCar} />
+        <ProtectedRoute component={Homepage} />
       </BrowserRouter>
     );
   }
