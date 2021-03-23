@@ -1,41 +1,34 @@
 import React, { Component } from "react";
 import "../../App.css"
 import firebase from "firebase/app";
-import { useHistory } from "react-router-dom";
+import { Redirect, useHistory } from "react-router-dom";
 
-class Login extends Component {
+const Login = () => {
 
-  constructor(props) {
-    super(props);
-    this.state = { username: "", password: "" };
-    this.handleUsername = this.handleUsername.bind(this);
-    this.handlePassword = this.handlePassword.bind(this);
-    this.submitLogin = this.submitLogin.bind(this);
-  }
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const history = useHistory();
 
-  handleUsername(event) {
-    this.setState({ username: event.target.value });
+  const handleUsername = (event) => {
+    setUsername(event.target.value);
   };
 
-  handlePassword(event) {
-    this.setState({ password: event.target.value });
+  const handlePassword = (event) => {
+    setPassword(event.target.value);
   };
 
-  submitLogin(event) {
+  const submitLogin = (event) => {
     event.preventDefault();
-    const history = useHistory;
-    firebase.auth().signInWithEmailAndPassword(this.state.username,this.state.password)
+    firebase.auth().signInWithEmailAndPassword(username,password)
     .then(async res => {
       if (res.user) {
         sessionStorage.setItem('isLoggedIn', 'true');
-        history.push(`/home`);
       } else {
         alert("Please check your credentials");
       }
     }).catch(err => console.error(err))
   }
 
-  render() {
     return (
       <div className="container" >
         <div className="row m-5 no-gutters shadow-lg">
@@ -52,24 +45,23 @@ class Login extends Component {
 
               <div className="form-group pb-3">
                 <label>Username</label>
-                <input type="text" className="form-control" placeholder="Enter Username" onChange={this.handleUsername} />
+                <input type="text" className="form-control" placeholder="Enter Username" onChange={handleUsername} />
               </div>
 
               <div className="form-group pb-3">
                 <label>Password</label>
-                <input type="password" className="form-control" placeholder="Enter Password" onChange={this.handlePassword} />
+                <input type="password" className="form-control" placeholder="Enter Password" onChange={handlePassword} />
               </div>
 
               <br />
 
-              <button type="submit" className="btn btn-primary btn-block" onClick={this.submitLogin}>Submit</button>
+              <button type="submit" className="btn btn-primary btn-block" onClick={submitLogin}>Submit</button>
             </form>
           </div>
 
         </div>
       </div>
     );
-  }
 }
 
 export default Login;

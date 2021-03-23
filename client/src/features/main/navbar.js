@@ -1,18 +1,17 @@
 import React, { Component } from "react";
 import firebase from 'firebase/app';
-import { useHistory } from "react-router";
+import { useHistory, Redirect } from "react-router";
 
 class Navbar extends Component {
 
     handleLogout(event) {
-        const history = useHistory;
-        sessionStorage.clear();
+        const history = useHistory();
         firebase.auth().signOut()
         .then(res => {
             console.log(res);
+            sessionStorage.clear();
             sessionStorage.setItem('isLoggedIn', 'false');
-            history.push(`/login`);
-            window.location.reload();
+            history.push("/");
         }).catch(err => console.error(err))
     }
 
@@ -30,7 +29,7 @@ class Navbar extends Component {
                         <a class="nav-link" href="#">View list of cars created</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">View car</a>
+                        <a class="nav-link" href="/view-car">View car</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Add car part</a>
@@ -74,7 +73,7 @@ class Navbar extends Component {
                 </li>
             </div>);
         }
-
+        
         return (
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
