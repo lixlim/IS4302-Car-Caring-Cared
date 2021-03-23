@@ -3,66 +3,62 @@ import SimpleStorageContract from "../../contracts/SimpleStorage.json";
 import getWeb3 from "../../getWeb3";
 
 class Login extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
 
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+  constructor(props) {
+    super(props);
+    this.state = { username: "", password: "" };
+    this.handleUsername = this.handleUsername.bind(this);
+    this.handlePassword = this.handlePassword.bind(this);
+    this.submitLogin = this.submitLogin.bind(this);
+  }
 
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
-
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
-      const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
-        deployedNetwork && deployedNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, contract: instance }, this.runExample);
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
-    }
+  handleUsername(event) {
+    this.setState({ username: event.target.value });
   };
 
-  runExample = async () => {
-    const { accounts, contract } = this.state;
-
-    // Stores a given value, 5 by default.
-    await contract.methods.set(5).send({ from: accounts[0] });
-
-    // Get the value from the contract to prove it worked.
-    const response = await contract.methods.get().call();
-
-    // Update state with the result.
-    this.setState({ storageValue: response });
+  handlePassword(event) {
+    this.setState({ password: event.target.value });
   };
+
+  submitLogin(event) {
+    event.preventDefault();
+  }
 
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <div className="App">
-        <h1>Good to Go!</h1>
-        <p>Your Truffle Box is installed and ready.</p>
-        <h2>Smart Contract Example</h2>
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 40</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+      <div className="container" >
+        <div className="row m-5 no-gutters shadow-lg">
+          <div className="col-md-7 d-none d-md-block">
+            <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80" className="img-fluid" style={{ minHeight: '100%' }} />
+          </div>
+          <div className="col-md-5 bg-white p-5">
+            <br />
+            <h1 className="pb-3">Login</h1>
+            
+            <form>
+              <br />
+              <br />
+
+              <div className="form-group pb-3">
+                <label>Username</label>
+                <input type="text" className="form-control" placeholder="Enter Username" onChange={this.handleUsername} />
+              </div>
+
+              <div className="form-group pb-3">
+                <label>Password</label>
+                <input type="password" className="form-control" placeholder="Enter Password" onChange={this.handlePassword} />
+              </div>
+
+              <br />
+
+              <button type="submit" className="btn btn-primary btn-block" onClick={this.submitLogin}>Submit</button>
+            </form>
+          </div>
+
+        </div>
       </div>
     );
   }
