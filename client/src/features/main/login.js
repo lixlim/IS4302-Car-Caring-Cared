@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "../../contracts/SimpleStorage.json";
-import getWeb3 from "../../getWeb3";
+import "../../App.css"
+import firebase from "firebase/app";
+import { useHistory } from "react-router-dom";
 
 class Login extends Component {
 
@@ -22,12 +23,19 @@ class Login extends Component {
 
   submitLogin(event) {
     event.preventDefault();
+    const history = useHistory;
+    firebase.auth().signInWithEmailAndPassword(this.state.username,this.state.password)
+    .then(async res => {
+      if (res.user) {
+        sessionStorage.setItem('isLoggedIn', 'true');
+        history.push(`/home`);
+      } else {
+        alert("Please check your credentials");
+      }
+    }).catch(err => console.error(err))
   }
 
   render() {
-    if (!this.state.web3) {
-      return <div>Loading Web3, accounts, and contract...</div>;
-    }
     return (
       <div className="container" >
         <div className="row m-5 no-gutters shadow-lg">
