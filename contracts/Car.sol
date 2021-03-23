@@ -13,6 +13,7 @@ contract Car {
         string carModel;
         address[] ownersList; // first is manufacturer, last is currOwner
         string[] carPartsList; //the list of keys for the carPartsMapping
+        mapping (string => bool) carPartsExistMap;
         mapping (string => serviceRecord[]) carPartsServiceRecordMapping;
     }
     struct serviceRecord {
@@ -23,7 +24,7 @@ contract Car {
         string batchNo;
         string comment;
     }
-    // new care template /////////////////
+    // new car template /////////////////
     address[] emptyOwnersArray;
     string[] emptyCarPartsListArray;
     car newCar = car(
@@ -35,6 +36,7 @@ contract Car {
 
     event CreateCar(string vin, string carModel, address manufacturer, uint numCarParts);
     event TransferCar(string vin, address prevOwner, address currOwner);
+    event AddServiceRecord(string vin, string carPart, uint numCarParts);
     event Debug(string str);
 
     constructor(CarNetwork cn) public {
@@ -56,7 +58,7 @@ contract Car {
         require(msg.sender == carMap[vin].ownersList[arrLength-1], "Require car's current owner");
         _;
     }
-    
+
     function createCar(string memory newVin, string memory newCarModel, 
     serviceRecord[] memory newCarParts) 
     public onlyRole("Manufacturer") {
@@ -65,10 +67,10 @@ contract Car {
         carMap[newVin] = newCar;
         carExistMap[newVin] = true;
         for(uint i = 0; i < newCarParts.length; i++){
-            carMap[newVin].carPartsList.push(newCarParts[i].carPart);
-            carMap[newVin].carPartsServiceRecordMapping[newCarParts[i].carPart].push(newCarParts[i]);
+            internalAddServiceRecord(newVin, newCarParts[i]);
         }
-        emit CreateCar(newVin, carMap[newVin].carModel, carMap[newVin].ownersList[0], newCarParts.length);
+        emit CreateCar(newVin, carMap[newVin].carModel,
+        carMap[newVin].ownersList[0], carMap[newVin].carPartsList.length);
     }
 
     function transferCar(string memory vin, address newOwner)
@@ -80,14 +82,26 @@ contract Car {
         emit TransferCar(vin, prevOwner, currOwner);
     }
 
+    function addServiceRecord(string memory vin, serviceRecord[] memory serviceRecordList)
+    public carExist(vin) onlyCurrOwner(vin) onlyRole("Workshop") {
+        for(uint i = 0; i < serviceRecordList.length; i++){
+            internalAddServiceRecord(vin, serviceRecordList[i]);
+        }
+    }
+
+    function internalAddServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
+    internal {
+        if(!carMap[vin].carPartsExistMap[newServiceRecord.carPart]) {
+            carMap[vin].carPartsExistMap[newServiceRecord.carPart] = true;
+            carMap[vin].carPartsList.push(newServiceRecord.carPart);
+            carMap[vin].carPartsServiceRecordMapping[newServiceRecord.carPart].push(newServiceRecord);
+        } else {
+            carMap[vin].carPartsServiceRecordMapping[newServiceRecord.carPart].push(newServiceRecord);
+        }
+        emit AddServiceRecord(vin, newServiceRecord.carPart, carMap[vin].carPartsList.length);
+    }
+
     // function getCar(string memory vin) public view returns (car memory){
     //     return carMap[vin];
-    // }
-
-    // function workShopAddServiceRecord(string memory vin, string memory createdOn,
-    // string memory carPart, string memory model, string memory batchNo, string memory comment) 
-    // public carExist(vin) onlyRole("Workshop") onlyCurrOwner(vin) {
- 
-    // }
-    
+    // }    
 }

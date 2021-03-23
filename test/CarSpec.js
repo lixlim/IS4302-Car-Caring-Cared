@@ -30,11 +30,53 @@ contract('Car', function (accounts) {
     const newCarPartServiceRecord3 = {
         createdBy: manufacturerAddress,
         createdOn: "01/01/21", carPart: "Light", model: "model CCC",
-        batchNo: "batch 000", comment: "create car, add light"
+        batchNo: "batch 000", comment: "create car, add left light"
+    };
+    const newCarPartServiceRecord4 = {
+        createdBy: manufacturerAddress,
+        createdOn: "01/01/21", carPart: "Light", model: "model DDD",
+        batchNo: "batch 000", comment: "create car, add right light"
+    };
+    const newCarPartServiceRecord5 = {
+        createdBy: manufacturerAddress,
+        createdOn: "02/02/21", carPart: "Light", model: "model DDD",
+        batchNo: "batch 234", comment: "replaced the previous faulty lights"
+    };
+    const newCarPartServiceRecord6 = {
+        createdBy: manufacturerAddress,
+        createdOn: "02/02/21", carPart: "Sound System", model: "model KKK",
+        batchNo: "batch 345", comment: "Added in a new car audio system"
+    };
+    const newCarPartServiceRecord7 = {
+        createdBy: manufacturerAddress,
+        createdOn: "02/02/21", carPart: "Spoiler", model: "model 432534F",
+        batchNo: "batch 4D5", comment: "Added in a new car spoiler"
+    };
+    const newCarPartServiceRecord8 = {
+        createdBy: manufacturerAddress,
+        createdOn: "03/03/21", carPart: "Engine", model: "model d432",
+        batchNo: "batch 99", comment: "Car crashed, replace engine"
+    };
+    const newCarPartServiceRecord9 = {
+        createdBy: manufacturerAddress,
+        createdOn: "03/03/21", carPart: "Wheel", model: "model vf2312",
+        batchNo: "batch 99", comment: "Car crashed, replace wheel"
     };
     const newCarPartList1 = [
         newCarPartServiceRecord1, newCarPartServiceRecord2, newCarPartServiceRecord3
     ];
+    const newCarPartList2 = [
+        newCarPartServiceRecord3, newCarPartServiceRecord4
+    ];
+    const serviceRecordList1 = [
+        newCarPartServiceRecord6
+    ]
+    const serviceRecordList2 = [
+        newCarPartServiceRecord6, newCarPartServiceRecord7
+    ]
+    const serviceRecordList3 = [
+        newCarPartServiceRecord8, newCarPartServiceRecord9
+    ]
     // #endregion
 
     beforeEach(async () => {
@@ -42,7 +84,7 @@ contract('Car', function (accounts) {
         carInstance = await Car.new(carNetworkInstance.address);
     });
 
-    it("Create car should work ", async () => {
+    it("Create car should work, no repeated parts", async () => {
         await registerManufacturer();
 
         var result1 = await carInstance.createCar(vin1, carModel1, newCarPartList1, {
@@ -53,6 +95,20 @@ contract('Car', function (accounts) {
                 ev.carModel == carModel1 &&
                 ev.manufacturer == manufacturerAddress &&
                 ev.numCarParts == newCarPartList1.length);
+        });
+    });
+
+    it("Create car should work, with repeated parts", async () => {
+        await registerManufacturer();
+
+        var result1 = await carInstance.createCar(vin1, carModel1, newCarPartList2, {
+                from: manufacturerAddress
+            });
+        truffleAssert.eventEmitted(result1, 'CreateCar', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carModel == carModel1 &&
+                ev.manufacturer == manufacturerAddress &&
+                ev.numCarParts == 1); // newCarPartList2
         });
     });
 
@@ -80,7 +136,6 @@ contract('Car', function (accounts) {
                 ev.prevOwner == manufacturerAddress &&
                 ev.currOwner == ownerAddress);
         });
-
     });
 
     it("Transfer car should fail when car doesn't exist", async () => {
@@ -107,6 +162,92 @@ contract('Car', function (accounts) {
             "Require car's current owner"
         );
     });
+
+    it("Workshop add 1 service record, new car part", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress);
+
+        var result1 = await carInstance.addServiceRecord(vin1, serviceRecordList1, {
+            from: workshopAddress
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carPart == "Sound System" &&
+                ev.numCarParts ==  newCarPartList1.length + serviceRecordList1.length);
+        });
+    });
+
+    it("Workshop add 2 service records, both new car part", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress);
+
+        var result1 = await carInstance.addServiceRecord(vin1, serviceRecordList2, {
+            from: workshopAddress
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carPart == "Sound System" &&
+                ev.numCarParts ==  newCarPartList1.length + serviceRecordList2.length - 1);
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carPart == "Spoiler" &&
+                ev.numCarParts ==  newCarPartList1.length + serviceRecordList2.length);
+        });
+    });
+
+    it("Workshop add 2 service records, both existing car part", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress);
+
+        var result1 = await carInstance.addServiceRecord(vin1, serviceRecordList3, {
+            from: workshopAddress
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carPart == "Engine" &&
+                ev.numCarParts ==  newCarPartList1.length);
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.carPart == "Wheel" &&
+                ev.numCarParts ==  newCarPartList1.length);
+        });
+    });
+
+    it("Add service records should fail, not called by workshop", async () => {
+        await registerManufacturer();
+        await registerOwner();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, ownerAddress);
+
+        await truffleAssert.reverts(
+            carInstance.addServiceRecord(vin1, serviceRecordList1, {
+                from: ownerAddress
+            }),
+            "You do not have the access right"
+        );
+    });
+
+    it("Add service records should fail, car not owned by workshop", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+ 
+        await truffleAssert.reverts(
+            carInstance.addServiceRecord(vin1, serviceRecordList1, {
+                from: workshopAddress
+            }),
+            "Require car's current owner"
+        );
+    });
+
 
     // it("get car", async () => {
     //     await registerManufacturer();
