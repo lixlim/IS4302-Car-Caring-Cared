@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import Navbar from "./navbar";
-import {Redirect} from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
-class Homepage extends Component {
-    render() {
-        return (
-            <div className="container">
-                <Navbar />
-                <h1 className="pb-3">Welcome</h1>
+const Homepage = () => {
+    return (
+        <>
+            <Navbar />
+            <div class="container">
+                <h3>Homepage</h3>
+                <p>What should we display here.</p>
             </div>
-        );
-    }
+        </>
+    );
 }
 
 export default Homepage;

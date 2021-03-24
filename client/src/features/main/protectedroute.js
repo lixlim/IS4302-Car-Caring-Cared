@@ -1,14 +1,21 @@
-import React, { Component } from 'react';
-import {Redirect} from 'react-router-dom';
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import { useAuth } from "./authprovider";
 
-class ProtectedRoute extends Component {
+const ProtectedRoute = ({ component: Component, ...rest }) => {
 
-    render() {
-        const Component = this.props.component;
-        const isLoggedIn = sessionStorage.getItem('isLoggedIn') ? 'true' : 'false';
+    const { currentUser } = useAuth();
 
-        return isLoggedIn ? (<Component />) : <Redirect to={{pathname: '/login'}} />;
-    }
-}
+    return (
+
+        <Route
+            {...rest}
+            render={props => {
+                return currentUser ? <Component {...props} /> :
+                    <Redirect to={"/login"} />
+            }} 
+        />
+    );
+};
 
 export default ProtectedRoute;
