@@ -23,7 +23,7 @@ contract Car {
         string batchNo;
         string comment;
     }
-    // new care template /////////////////
+    // new car template /////////////////
     address[] emptyOwnersArray;
     string[] emptyCarPartsListArray;
     car newCar = car(

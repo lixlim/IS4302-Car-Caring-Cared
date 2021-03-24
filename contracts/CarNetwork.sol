@@ -30,17 +30,20 @@ contract CarNetwork {
             newUser.role = "Owner";
             role = "Owner";
         }
-        if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Manufacturer")))) {
+        else if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Manufacturer")))) {
             newUser.role = "Manufacturer";
             role = "Manufacturer";
         }
-        if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Dealer")))) {
+        else if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Dealer")))) {
             newUser.role = "Dealer";
             role =  "Dealer";
         }
-        if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Workshop")))) {
+        else if (keccak256(abi.encodePacked((newRole))) == keccak256(abi.encodePacked(("Workshop")))) {
             newUser.role = "Workshop";
             role = "Workshop";
+        }
+        else {
+            revert("Role does not exist");
         }
         userExistMap[newUserAddress] = true;
         userMap[newUserAddress] = newUser;
@@ -54,6 +57,11 @@ contract CarNetwork {
         } else {
             return false;
         }
+    }
+
+    function returnRoleWithAccount(address checkAddress) public view returns(string memory) {
+        require(userExistMap[checkAddress], "User not registered in system");
+        return userMap[checkAddress].role;
     }
 
 }
