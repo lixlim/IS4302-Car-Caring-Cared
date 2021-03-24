@@ -3,10 +3,14 @@ import "./view-car-list.css";
 
 
 class ViewCarList extends Component {
-    state = {totalCar: 2, cars: [{name: "car1", carId: "12345", owner: "tom"}, {name: "car2", carId: "00001", owner: "tom"}]};
+    
+    state = {totalCar: 0, cars: null};
 
-    componentDidMount = async () => {
-        //this.setState({totalCar: 2, cars: {car1: {name: "car1", carId: "12345", owner: "tom"}, car2: {name: "car2", carId: "00001", owner: "tom"}}});
+    //retriving data and setting list of cars for user
+    constructor(props) {
+        super(props);
+        console.log(props)
+        this.state = {totalCar: 0, cars: [{name: "car1", carId: "12345", owner: "tom"}, {name: "car2", carId: "00001", owner: "tom"}]};
         console.log(this.state);
     }
 
@@ -16,7 +20,7 @@ class ViewCarList extends Component {
         const { totalCar, cars } = this.state;
 
         return (
-        <div class="container">
+        <div>
             { totalCar > 0  &&
             <label>
                 <div> Total Cars owned: { totalCar} </div>
