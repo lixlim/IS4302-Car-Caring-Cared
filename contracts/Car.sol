@@ -23,6 +23,9 @@ contract Car {
         string batchNo;
         string comment;
     }
+    mapping (address => string[]) private ownerToCars;
+    mapping (address => string[]) private manufacturerToCars;
+
     // new car template /////////////////
     address[] emptyOwnersArray;
     string[] emptyCarPartsListArray;
@@ -64,6 +67,7 @@ contract Car {
         newCar.ownersList.push(msg.sender);
         carMap[newVin] = newCar;
         carExistMap[newVin] = true;
+        ownerToCars[msg.sender].push(newVin);
         for(uint i = 0; i < newCarParts.length; i++){
             carMap[newVin].carPartsList.push(newCarParts[i].carPart);
             carMap[newVin].carPartsServiceRecordMapping[newCarParts[i].carPart].push(newCarParts[i]);
@@ -77,7 +81,21 @@ contract Car {
         address prevOwner = carMap[vin].ownersList[arrLength-1];
         carMap[vin].ownersList.push(newOwner);
         address currOwner = carMap[vin].ownersList[arrLength];
+        for ( uint i = 0; i < ownerToCars[msg.sender].length; i++){
+            if (keccak256(abi.encodePacked(ownerToCars[msg.sender][i])) == keccak256(abi.encodePacked(vin))){
+                ownerToCars[msg.sender][i] = ownerToCars[msg.sender][ownerToCars[msg.sender].length - 1]; //swap and delete
+                delete ownerToCars[msg.sender][ownerToCars[msg.sender].length - 1];
+                ownerToCars[msg.sender].length--;
+                break;
+            }
+        }
+        ownerToCars[newOwner].push(vin);
         emit TransferCar(vin, prevOwner, currOwner);
+    }
+
+    function getCarsList() //for owner to get all currently owned cars
+    public view returns(string[] memory) {
+        return ownerToCars[msg.sender];
     }
 
     // function getCar(string memory vin) public view returns (car memory){

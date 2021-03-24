@@ -41,7 +41,7 @@ contract('Car', function (accounts) {
         carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
         carInstance = await Car.new(carNetworkInstance.address);
     });
-
+/*
     it("Create car should work ", async () => {
         await registerManufacturer();
 
@@ -106,6 +106,39 @@ contract('Car', function (accounts) {
             }),
             "Require car's current owner"
         );
+    });
+*/
+    it("Get car list from owner address should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        var result = await carInstance.getCarsList({
+            from: manufacturerAddress
+        });
+        assert.sameMembers(result,
+            ['A0000'],
+            "Does not match owner's currently owned cars"
+        )
+    });
+
+    it("Get car list from owner address after ownership transfer should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await carInstance.transferCar(vin1, ownerAddress, {
+            from: manufacturerAddress
+        });
+        var result = await carInstance.getCarsList({
+            from: ownerAddress
+        });
+        assert.sameMembers(result,
+            ['A0000'],
+            "Does not match owner's currently owned cars"
+        )
+        var result = await carInstance.getCarsList({
+            from: manufacturerAddress
+        });
+        assert.isEmpty(result,
+            "Does not match owner's currently owned cars"
+        )
     });
 
     // it("get car", async () => {
