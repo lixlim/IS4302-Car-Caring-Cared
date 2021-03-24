@@ -94,8 +94,11 @@ const Navbar = () => {
                     <li><a href="#">Page 2</a></li>
                     <li><a href="#">Page 3</a></li>
                 </ul>
+                <form class="form-inline my-2 my-lg-0">
+                    <button class="btn btn btn-outline-primary my-2 my-sm-0" type="submit" onClick={handleLogout}>Logout</button>
+                </form>
             </div>
-        </nav>
+        </nav >
     );
 }
 
