@@ -23,21 +23,11 @@ const Navbar = () => {
     if (sessionStorage.getItem('role') === 'Manufacturer') {
         menu = (
             <div>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Create car</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">View list of cars created</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/view-car">View car</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Add car part</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Transfer ownership</a>
-                </li>
+                <a class="nav-item nav-link" href="#">Create car</a>
+                <a class="nav-item nav-link" href="#">View list of cars created</a>
+                <a class="nav-item nav-link" href="/view-car">View car</a>
+                <a class="nav-item nav-link" href="#">Add car part</a>
+                <a class="nav-item nav-link" href="#">Transfer ownership</a>
             </div>
         );
     } else if (sessionStorage.getItem('role') === 'Dealer') {
@@ -63,42 +53,27 @@ const Navbar = () => {
         </div>)
     } else {
         menu = (<div>
-            <li class="nav-item">
-                <a class="nav-link" href="#">View list of cars owned</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">View car</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">Transfer ownership</a>
-            </li>
+                <a class="nav-item nav-link" href="#">View list of cars owned</a>
+                <a class="nav-item nav-link" href="#">View car</a>
+                <a class="nav-item nav-link" href="#">Transfer ownership</a>
         </div>);
     }
 
     return (
-        <nav class="navbar navbar-default navbar-static-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">WebSiteName</a>
-
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <sapn class="icon-bar"></sapn>
-                    </button>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="#">Navbar</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav">
+                    {menu}
                 </div>
-                <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
-                    <li class="active"><a href="#">Home</a></li>
-                    <li><a href="#">Page 1</a></li>
-                    <li><a href="#">Page 2</a></li>
-                    <li><a href="#">Page 3</a></li>
-                </ul>
-                <form class="form-inline my-2 my-lg-0">
-                    <button class="btn btn btn-outline-primary my-2 my-sm-0" type="submit" onClick={handleLogout}>Logout</button>
-                </form>
             </div>
-        </nav >
+            <form class="form-inline my-2 my-lg-0">
+                <button class="btn btn btn-outline-primary my-2 my-sm-0" type="submit" onClick={handleLogout}>Logout</button>
+            </form>
+        </nav>
     );
 }
 
