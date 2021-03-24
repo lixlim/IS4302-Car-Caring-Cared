@@ -7,8 +7,9 @@ const Homepage = () => {
         <>
             <Navbar />
             <div class="container">
-                <h3>Homepage</h3>
-                <p>What should we display here.</p>
+                <div class='row mb-5' />
+                    <h3>Homepage</h3>
+                    <p>What should we display here.</p>
             </div>
         </>
     );

@@ -10,6 +10,7 @@ class ViewCar extends Component {
       <>
         <Navbar />
         <div class="container">
+          <div class='row mb-5' />
           <h3>View Car</h3>
           <p>Display all car details here.</p>
         </div>
