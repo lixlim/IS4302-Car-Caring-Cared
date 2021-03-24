@@ -59,7 +59,7 @@ const Login = () => {
             </div>
 
             <br/>
-            <button type="submit" className="btn btn-primary btn-block" onClick={submitLogin}>Submit</button>
+            <button type="submit" className="btn btn-info btn-block" onClick={submitLogin}>Submit</button>
           </form>
           <br/>
           {error && <div class="alert alert-danger" role="alert">
