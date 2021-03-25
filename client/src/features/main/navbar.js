@@ -59,7 +59,7 @@ const Navbar = () => {
                 <div class="navbar-nav">
                     {menu}
                     <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-outline-light btn-sm" type="submit" onClick={handleLogout}>Logout</button>
+                        <button class="btn btn-link pl-0 w-100 text-left" style={{color:"#ffffff"}} type="submit" onClick={handleLogout}>Logout</button>
                     </form>
                 </div>
 
