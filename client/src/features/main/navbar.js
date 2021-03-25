@@ -1,10 +1,10 @@
-import React, { Component } from "react";
-import { useHistory, Redirect } from "react-router";
+import React from "react";
+import { useHistory } from "react-router";
 import { useAuth } from "./authprovider";
 
 const Navbar = () => {
 
-    const { currentUser, logout } = useAuth();
+    const { currentUser, logout, userInfo } = useAuth();
     const history = useHistory();
 
     const handleLogout = async () => {
@@ -22,29 +22,29 @@ const Navbar = () => {
     if (sessionStorage.getItem('role') === 'Manufacturer') {
         menu = (
             <>
-                <a class="nav-item nav-link" href="#">Create car</a>
+                <a class="nav-item nav-link" href="/">Create car</a>
                 <a class="nav-item nav-link" href="/viewCar">View list of cars created</a>
                 <a class="nav-item nav-link" href="/viewCar/:id">View car</a>
-                <a class="nav-item nav-link" href="#">Add car part</a>
-                <a class="nav-item nav-link" href="#">Marketplace</a>
+                <a class="nav-item nav-link" href="/">Add car part</a>
+                <a class="nav-item nav-link" href="/">Marketplace</a>
             </>
         );
     } else if (sessionStorage.getItem('role') === 'Dealer') {
         menu = (<>
             <a class="nav-link" href="/viewCar">View list of cars owned</a>
             <a class="nav-link" href="/viewCar/:id">View car</a>
-            <a class="nav-item nav-link" href="#">Marketplace</a>
+            <a class="nav-item nav-link" href="/">Marketplace</a>
         </>);
     } else if (sessionStorage.getItem('role') === 'Workshop') {
         menu = (<div>
-                <a class="nav-link" href="#">Create service record</a>
+                <a class="nav-link" href="/">Create service record</a>
                 <a class="nav-link" href="/viewCar/:id">View car</a>
         </div>)
     } else {
         menu = (<>
             <a class="nav-item nav-link" href="/viewCar">View list of cars owned</a>
             <a class="nav-item nav-link" href="/viewCar/:id">View car</a>
-            <a class="nav-item nav-link" href="#">Marketplace</a>
+            <a class="nav-item nav-link" href="/">Marketplace</a>
         </>
         );
     }
@@ -59,8 +59,9 @@ const Navbar = () => {
                 <div class="navbar-nav">
                     {menu}
                     <li className="nav-item" style={{color:"#ffffff"}}>Signed in as {currentUser && currentUser.email}</li>
+                    <li className="nav-item" style={{color:"#ffffff"}}>Ether account is {userInfo && userInfo.accountAddress}</li>
                     <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-link pl-0 text-left" style={{color:"#90e4f1"}} type="submit" onClick={handleLogout}>Logout</button>
+                        <button class="btn btn-link pl-0 text-left" style={{color:"#b8b8b8"}} type="submit" onClick={handleLogout}>Logout</button>
                     </form>
                 </div>
 

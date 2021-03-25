@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, BrowserRouter, } from "react-router-dom";
+import { Route, BrowserRouter, } from "react-router-dom";
 import Login from './features/main/login';
 import Homepage from './features/main/homepage';
 import Testpage from './features/main/testpage';

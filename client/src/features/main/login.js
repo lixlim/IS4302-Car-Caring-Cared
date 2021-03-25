@@ -39,7 +39,7 @@ const Login = () => {
     <div className="container" >
       <div className="row m-5 no-gutters shadow-lg">
         <div className="col-md-7 d-none d-md-block">
-          <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80" className="img-fluid" style={{ minHeight: '100%' }} />
+          <img src="https://images.unsplash.com/photo-1555215695-3004980ad54e?ixlib=rb-1.2.1&ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&auto=format&fit=crop&w=1050&q=80" alt='car-portal' className="img-fluid" style={{ minHeight: '100%' }} />
         </div>
         <div className="col-md-5 bg-white p-5">
           <h1 className="pb-3">Login</h1>
