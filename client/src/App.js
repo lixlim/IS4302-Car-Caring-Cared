@@ -62,7 +62,7 @@ class App extends Component {
     
     //uid in database - buyer1, buyer2, dealer, manufacturer, workshop
     const dbAccounts = ['tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
-    for (var i = 1; i < 6; i++) {
+    for (var i = 0; i < 5; i++) {
       firebase.database().ref('/accounts/' + dbAccounts[i]).update({
         accountAddress: this.state.accounts[i],
       }, (error) => {
