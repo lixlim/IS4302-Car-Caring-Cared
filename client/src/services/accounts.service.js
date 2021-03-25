@@ -7,16 +7,10 @@ class AccountService {
     return db;
   }
 
-  create(user) {
-    /*
-    user = {
-      email:
-      address: //ether account
-    }
-    */
-    return db.push(user); //returns userID
+  create(uid, accountAddress) {
+    return firebase.ref("/accounts/" + uid).set(accountAddress);
   }
-
+/*
   get(key) { 
     // key = userID
     return db.on(key, function(snapshot) {
@@ -36,6 +30,7 @@ class AccountService {
   deleteAll() {
     return db.remove();
   }
+  */
 }
 
 export default new AccountService();
