@@ -15,7 +15,7 @@ contract('CarNetwork', function (accounts) {
         carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
         carInstance = await Car.new(carNetworkInstance.address);
     });
-
+/*
     it("Register new Owner should work ", async () => {
         var result1 = await carNetworkInstance.register(ownerAddress, "Owner", {
             from: carNetworkHostAddress
@@ -83,7 +83,7 @@ contract('CarNetwork', function (accounts) {
         assert.strictEqual(result1,
             true,
             "Address does not match role"
-            )
+        )
     });
 
     it("Check Role should fail", async () => {
@@ -92,28 +92,48 @@ contract('CarNetwork', function (accounts) {
         assert.strictEqual(result1,
             false,
             "Address does not match role"
-            )
+        )
     });
 
-    async function registerOwner(){
+    it("Return Role with address should work", async () => {
+        await registerManufacturer();
+        assert.strictEqual(await carNetworkInstance.returnRoleWithAccount(manufacturerAddress),
+            "Manufacturer",
+            "Address does not match role"
+        )
+    });
+
+    it("Return Role with address should fail", async () => {
+        let result;
+        try {
+            result = await carNetworkInstance.returnRoleWithAccount(accounts[5]);
+        } catch (e) {}
+        assert.equal(
+            result,
+            undefined,
+            "Should throw error when user is not registered"
+        );
+    });
+
+    async function registerOwner() {
         await carNetworkInstance.register(ownerAddress, "Owner", {
             from: carNetworkHostAddress
         });
     };
-    async function registerManufacturer(){
+    async function registerManufacturer() {
         await carNetworkInstance.register(manufacturerAddress, "Manufacturer", {
             from: carNetworkHostAddress
         });
     };
-    async function registerDealer(){
+    async function registerDealer() {
         await carNetworkInstance.register(dealerAddress, "Dealer", {
             from: carNetworkHostAddress
         });
     };
-    async function registerWorkshop(){
+    async function registerWorkshop() {
         await carNetworkInstance.register(workshopAddress, "Workshop", {
             from: carNetworkHostAddress
         });
     };
-
+*/
 });
