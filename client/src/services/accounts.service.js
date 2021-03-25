@@ -11,15 +11,14 @@ class AccountService {
     return firebase.ref("/accounts/" + uid).set(info);
   }
 
-/*
-  get(key) { 
-    // key = userID
-    return db.on(key, function(snapshot) {
-      snapshot.val();
-   });
+  getAccountWithUid(uid) { 
+    return db.child(uid).get();
   }
 
-
+  getAccountWithAddress(address) { 
+    return db.orderByChild('accountAddress').equalTo(address);
+  }
+/*
   update(key, value) {
     return db.child(key).update(value);
   }
