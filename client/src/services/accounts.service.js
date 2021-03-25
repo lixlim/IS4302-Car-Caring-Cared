@@ -7,9 +7,10 @@ class AccountService {
     return db;
   }
 
-  create(uid, accountAddress) {
-    return firebase.ref("/accounts/" + uid).set(accountAddress);
+  createAccount(uid, info) {
+    return firebase.ref("/accounts/" + uid).set(info);
   }
+
 /*
   get(key) { 
     // key = userID
