@@ -72,6 +72,7 @@ contract Car {
         carMap[newVin] = newCar;
         carExistMap[newVin] = true;
         ownerToCars[msg.sender].push(newVin);
+        manufacturerToCars[msg.sender].push(newVin);
         for(uint i = 0; i < newCarParts.length; i++){
             carMap[newVin].carPartsList.push(newCarParts[i].carPart);
             carMap[newVin].carPartsServiceRecordMapping[newCarParts[i].carPart].push(newCarParts[i]);
@@ -100,6 +101,19 @@ contract Car {
     function getCarsList() //for owner to get all currently owned cars (returns vin and model of each car)
     public view returns(simplifiedCar[] memory) {
         string[] memory vinList =  ownerToCars[msg.sender];
+        simplifiedCar[] memory carList = new simplifiedCar[](vinList.length);
+        for (uint i = 0; i< vinList.length; i++){
+            carList[i] = simplifiedCar({
+                carModel: carMap[vinList[i]].carModel,
+                carVin: vinList[i]
+            });
+        }
+        return carList;
+    }
+
+    function getManufacturedCarsList() //for manufacturer to get all previously manufactured cars (returns vin and model of each car)
+    public view returns(simplifiedCar[] memory) {
+        string[] memory vinList =  manufacturerToCars[msg.sender];
         simplifiedCar[] memory carList = new simplifiedCar[](vinList.length);
         for (uint i = 0; i< vinList.length; i++){
             carList[i] = simplifiedCar({

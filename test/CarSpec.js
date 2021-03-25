@@ -149,6 +149,34 @@ contract('Car', function (accounts) {
         )
     });
 
+    it("Get car list from owner address after ownership transfer should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await createCar2();
+        await carInstance.transferCar(vin1, ownerAddress, {
+            from: manufacturerAddress
+        });
+        var result = await carInstance.getManufacturedCarsList({
+            from: manufacturerAddress
+        });
+        assert.strictEqual(result[0][0],
+            carModel1,
+            "Does not match manufacturer's previously manufactured car model"
+        );
+        assert.strictEqual(result[0][1],
+            vin1,
+            "Does not match manufacturer's previously manufactured car vin"
+        );
+        assert.strictEqual(result[1][0],
+            carModel2,
+            "Does not match manufacturer's previously manufactured car model"
+        );
+        assert.strictEqual(result[1][1],
+            vin2,
+            "Does not match manufacturer's previously manufactured car vin"
+        );
+    });
+
     // it("get car", async () => {
     //     await registerManufacturer();
     //     await createCar1();
@@ -182,6 +210,12 @@ contract('Car', function (accounts) {
 
     async function createCar1() {
         await carInstance.createCar(vin1, carModel1, newCarPartList1, {
+            from: manufacturerAddress
+        });
+    }
+
+    async function createCar2() {
+        await carInstance.createCar(vin2, carModel2, newCarPartList1, {
             from: manufacturerAddress
         });
     }
