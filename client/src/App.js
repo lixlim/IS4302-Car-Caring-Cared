@@ -6,6 +6,8 @@ import ViewCar from './features/car/view-car';
 import Testpage from './features/main/testpage';
 import ProtectedRoute from "./features/main/protectedroute";
 import { AuthProvider } from "./features/main/authprovider";
+import ViewCarList from './features/car/view-car-list/view-car-list';
+import ViewOneCar from './features/car/view-car-list/view-car';
 
 const App = () => {
 
@@ -16,6 +18,8 @@ const App = () => {
         <ProtectedRoute exact path="/" component={Homepage} />
         <ProtectedRoute exact path="/test" component={Testpage} />
         <ProtectedRoute exact path="/view-car" component={ViewCar} />
+        <ProtectedRoute exact path="/viewCar/:id" component={ViewOneCar} />
+        <ProtectedRoute exact path="/viewCar" component={ViewCarList} />
       </AuthProvider>
     </BrowserRouter>
 

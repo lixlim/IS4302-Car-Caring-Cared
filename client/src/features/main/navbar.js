@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import firebase from 'firebase/app';
 import { useHistory, Redirect } from "react-router";
 import { useAuth } from "./authprovider";
 
@@ -24,32 +23,28 @@ const Navbar = () => {
         menu = (
             <>
                 <a class="nav-item nav-link" href="#">Create car</a>
-                <a class="nav-item nav-link" href="#">View list of cars created</a>
-                <a class="nav-item nav-link" href="/view-car">View car</a>
+                <a class="nav-item nav-link" href="/viewCar">View list of cars created</a>
+                <a class="nav-item nav-link" href="/viewCar/:id">View car</a>
                 <a class="nav-item nav-link" href="#">Add car part</a>
-                <a class="nav-item nav-link" href="#">Transfer ownership</a>
+                <a class="nav-item nav-link" href="#">Marketplace</a>
             </>
         );
     } else if (sessionStorage.getItem('role') === 'Dealer') {
         menu = (<>
-            <a class="nav-link" href="#">View list of cars owned</a>
-            <a class="nav-link" href="/view-car">View car</a>
-            <a class="nav-link" href="#">Transfer ownership</a>
+            <a class="nav-link" href="/viewCar">View list of cars owned</a>
+            <a class="nav-link" href="/viewCar/:id">View car</a>
+            <a class="nav-item nav-link" href="#">Marketplace</a>
         </>);
     } else if (sessionStorage.getItem('role') === 'Workshop') {
         menu = (<div>
-            <li class="nav-item">
                 <a class="nav-link" href="#">Create service record</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/view-car">View car</a>
-            </li>
+                <a class="nav-link" href="/viewCar/:id">View car</a>
         </div>)
     } else {
         menu = (<>
-            <a class="nav-item nav-link" href="#">View list of cars owned</a>
-            <a class="nav-item nav-link" href="/view-car">View car</a>
-            <a class="nav-item nav-link" href="#">Transfer ownership</a>
+            <a class="nav-item nav-link" href="/viewCar">View list of cars owned</a>
+            <a class="nav-item nav-link" href="/viewCar/:id">View car</a>
+            <a class="nav-item nav-link" href="#">Marketplace</a>
         </>
         );
     }
@@ -64,7 +59,7 @@ const Navbar = () => {
                 <div class="navbar-nav">
                     {menu}
                     <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-outline-light btn-sm" type="submit" onClick={handleLogout}>Logout</button>
+                        <button class="btn btn-link pl-0 w-100 text-left" style={{color:"#ffffff"}} type="submit" onClick={handleLogout}>Logout</button>
                     </form>
                 </div>
 
