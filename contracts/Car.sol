@@ -15,6 +15,10 @@ contract Car {
         string[] carPartsList; //the list of keys for the carPartsMapping
         mapping (string => serviceRecord[]) carPartsServiceRecordMapping;
     }
+    struct simplifiedCar{
+        string carModel;
+        string carVin;
+    }
     struct serviceRecord {
         address createdBy;
         string createdOn; 
@@ -93,9 +97,17 @@ contract Car {
         emit TransferCar(vin, prevOwner, currOwner);
     }
 
-    function getCarsList() //for owner to get all currently owned cars
-    public view returns(string[] memory) {
-        return ownerToCars[msg.sender];
+    function getCarsList() //for owner to get all currently owned cars (returns vin and model of each car)
+    public view returns(simplifiedCar[] memory) {
+        string[] memory vinList =  ownerToCars[msg.sender];
+        simplifiedCar[] memory carList = new simplifiedCar[](vinList.length);
+        for (uint i = 0; i< vinList.length; i++){
+            carList[i] = simplifiedCar({
+                carModel: carMap[vinList[i]].carModel,
+                carVin: vinList[i]
+            });
+        }
+        return carList;
     }
 
     // function getCar(string memory vin) public view returns (car memory){
