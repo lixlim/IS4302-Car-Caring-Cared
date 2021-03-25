@@ -5,8 +5,8 @@ const Homepage = () => {
     return (
         <>
             <Navbar />
-            <div class="container">
-                <div class='row mb-5' />
+            <div className="container">
+                <div className='row mb-5' />
                     <h3>Homepage</h3>
                     <p>What should we display here.</p>
             </div>

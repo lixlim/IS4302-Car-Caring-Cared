@@ -13,13 +13,13 @@ class ViewOneCar extends Component {
         return (
             <div>
                 <Navbar />
-                <div class="container">
-                    <div class='row mb-5' />
+                <div className="container">
+                    <div className='row mb-5' />
                     <h3>Viewing Car Id {carId}</h3>
 
                     <br />
             Servicing records for #Car Name#
-            <table class="table">
+            <table className="table">
                         <thead>
                             <tr>
                                 <th scope="col">Servicing Record Num</th>

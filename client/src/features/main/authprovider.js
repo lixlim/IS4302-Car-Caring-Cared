@@ -24,17 +24,10 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const unsubscribe = firebase.auth().onAuthStateChanged(user => {
             setCurrentUser(user)
-            firebase.database.child("accounts").child(user.uid).get().then(function(snapshot) {
-                if (snapshot.exists()) {
-                  console.log(snapshot.val());
-                  setUserInfo(snapshot.val());
-                }
-                else {
-                  console.log("No data available");
-                }
-              }).catch(function(error) {
-                console.error(error);
-              });
+            firebase.database().ref("/accounts/" + user.uid).on('value', (snapshot) => {
+                    // console.log(snapshot.val());
+                    setUserInfo(snapshot.val());
+            });
             setLoading(false)
         })
 
