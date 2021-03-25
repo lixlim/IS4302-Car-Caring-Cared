@@ -4,7 +4,7 @@ import { useAuth } from "./authprovider";
 
 const Navbar = () => {
 
-    const { currectUser, logout } = useAuth();
+    const { currentUser, logout } = useAuth();
     const history = useHistory();
 
     const handleLogout = async () => {
@@ -58,8 +58,9 @@ const Navbar = () => {
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     {menu}
+                    <li className="nav-item" style={{color:"#ffffff"}}>Signed in as {currentUser && currentUser.email}</li>
                     <form class="form-inline my-2 my-lg-0">
-                        <button class="btn btn-link pl-0 w-100 text-left" style={{color:"#ffffff"}} type="submit" onClick={handleLogout}>Logout</button>
+                        <button class="btn btn-link pl-0 text-left" style={{color:"#90e4f1"}} type="submit" onClick={handleLogout}>Logout</button>
                     </form>
                 </div>
 
