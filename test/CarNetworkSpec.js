@@ -15,7 +15,7 @@ contract('CarNetwork', function (accounts) {
         carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
         carInstance = await Car.new(carNetworkInstance.address);
     });
-/*
+
     it("Register new Owner should work ", async () => {
         var result1 = await carNetworkInstance.register(ownerAddress, "Owner", {
             from: carNetworkHostAddress
@@ -135,5 +135,4 @@ contract('CarNetwork', function (accounts) {
             from: carNetworkHostAddress
         });
     };
-*/
 });
