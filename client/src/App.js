@@ -22,11 +22,12 @@ class App extends Component {
   //update dealer account in Firebase db
   //update manufacturer account in Firebase db
   //update workshop account in Firebase db
-  state = {
-    web3: null,
-    accounts: null,
-    carNetworkContract: null,
-  };
+    state = {
+      web3: null,
+      accounts: null,
+      carNetworkContract: null,
+    };
+ 
 
 
   componentDidMount = async () => {
@@ -49,6 +50,7 @@ class App extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carNetwork: carNetworkInstance }, this.populateData);
+      console.log("callFirebase");
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -60,16 +62,16 @@ class App extends Component {
 
   populateData() {
     
-    //uid in database - buyer1, buyer2, dealer, manufacturer, workshop
-    const dbAccounts = ['tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
-    for (var i = 0; i < 5; i++) {
+    //uid in database - admin, buyer1, buyer2, dealer, manufacturer, workshop
+    const dbAccounts = ['cgsxJNLAXeVtEN2H8UxxmK271mE2', 'tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
+    for (var i = 0; i < 6; i++) {
       firebase.database().ref('/accounts/' + dbAccounts[i]).update({
         accountAddress: this.state.accounts[i],
       }, (error) => {
         if (error) {
           alert(dbAccounts[i] + "not initialised");
         } else {
-          // Data saved successfully!
+          alert(dbAccounts[i] + "initialised sucessfully");
         }
       });
     }
