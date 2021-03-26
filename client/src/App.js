@@ -9,7 +9,7 @@ import ViewCarList from './features/car/view-car-list/view-car-list';
 import ViewOneCar from './features/car/view-car-list/view-car';
 import getWeb3 from "./getWeb3";
 import CarNetworkContract from "./contracts/CarNetwork.json";
-import firebase from '../../firebase';
+import firebase from 'firebase/app';
 
 
 class App extends Component {
