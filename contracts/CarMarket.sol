@@ -12,6 +12,7 @@ contract CarMarket {
         string carModel;
         string carVin;
         uint32 carPrice;
+        address carOwner;
     }
 
     constructor(Car c) public {
@@ -23,14 +24,12 @@ contract CarMarket {
     event Debug(string str);
     
     modifier carExist(string memory vin) {
-        require(true);
-        //require(car.carExistMap(vin), "Vin number does not exist");
+        require(car.checkCarExists(vin), "Vin number does not exist");
         _;
     }
 
     modifier onlyCurrOwner(string memory vin) {
-        require (true); //TODO
-        //require(msg.sender == car.getCar().ownersList[-1], "Require car's current owner");
+        require(msg.sender == car.getCurrentOwner(vin), "Require car's current owner");
         _;
     }
 
@@ -65,9 +64,10 @@ contract CarMarket {
         for (uint i = 0; i < carListings.length; i++){
             string memory vin = carListings[i];
             carList[i] = listedCar({
-                carModel: "", //TODO: getcarmodel,
+                carModel: car.getCar(vin).carModel, 
                 carVin: vin, 
-                carPrice: carPrices[vin]
+                carPrice: carPrices[vin],
+                carOwner: car.getCurrentOwner(vin)
             });
         }
         return carList;

@@ -44,16 +44,16 @@ contract('CarMarket', function (accounts) {
             "Price must be > 0"
         );
     });
-    /*
-        it("List car should fail if caller is not current owner", async () => {
-            await truffleAssert.reverts(
-                carMarketInstance.list(vin1, 0, {
-                    from: manufacturerAddress
-                }),
-                "Require car's current owner"
-            );
-        });
-    */
+
+    it("List car should fail if caller is not current owner", async () => {
+        await truffleAssert.reverts(
+            carMarketInstance.list(vin1, 0, {
+                from: manufacturerAddress
+            }),
+            "Require car's current owner"
+        );
+    });
+
     it("List car should fail if vin does not exist", async () => {
         await truffleAssert.reverts(
             carMarketInstance.list(vin2, price1, {
@@ -80,8 +80,11 @@ contract('CarMarket', function (accounts) {
         var result = await carMarketInstance.getAllListedCars({
             from: accounts[9]
         });
-        var arr = [["", vin1, price1.toString()], ["", vin2, price2.toString()]]
-        for (var i = 0; i < result.length; i++){
+        var arr = [
+            [carModel1, vin1, price1.toString(), ownerAddress.toString()],
+            [carModel2, vin2, price2.toString(), manufacturerAddress.toString()]
+        ]
+        for (var i = 0; i < result.length; i++) {
             assert.sameOrderedMembers(
                 result[i],
                 arr[i],
@@ -90,22 +93,16 @@ contract('CarMarket', function (accounts) {
         }
 
     });
-    /*
-        it("Unlist car should fail if caller is not current owner", async () => {
-            await truffleAssert.reverts(
-                carMarketInstance.unlist(vin1,{
-                    from: manufacturerAddress
-                }),
-                "Require car's current owner"
-            );
-            var result = await carMarketInstance.unlist(vin1, price1, {
-                from: ownerAddress
-            });
-            truffleAssert.eventNotEmitted(result, 'unlistCar', (ev) => {
-                return (ev.vin == vin1);
-            });
-        });
-    */
+
+    it("Unlist car should fail if caller is not current owner", async () => {
+        await truffleAssert.reverts(
+            carMarketInstance.unlist(vin1, {
+                from: manufacturerAddress
+            }),
+            "Require car's current owner"
+        );
+    });
+
     it("Unlist car should work", async () => {
         var result = await carMarketInstance.unlist(vin1, {
             from: ownerAddress

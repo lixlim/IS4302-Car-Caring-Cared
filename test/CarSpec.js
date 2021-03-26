@@ -407,6 +407,48 @@ contract('Car', function (accounts) {
         );
     });
 
+    it("getCar should work", async () => {
+        await registerManufacturer();
+        await registerWorkshop1();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
+
+        var result = await carInstance.getCar(vin1,{
+            from: ownerAddress1
+        });
+        //console.log(result);
+        arr = [
+            [
+              '0x957D81bC193DdEf6595fCd43320af30d4d6E60e5',
+              '01/01/21',
+              'create car, and whatever else comment is to be added by the manufacturer'
+            ],
+            [
+              '0x64f31101dDCdfeAa243677e598D3dc0cAc634efe',
+              '02/02/21',
+              'This comment is created workshopAddress1. serviceRecord1. Any text goes here'
+            ],
+            [
+              '0x64f31101dDCdfeAa243677e598D3dc0cAc634efe',
+              '03/03/21',
+              'This comment is created workshopAddress1. serviceRecord2. Any text goes here'
+            ]
+        ]
+        assert.strictEqual(result[0], vin1, "Did not return correct vin");
+        assert.strictEqual(result[1], carModel1, "Did not return correct model");
+        assert.deepEqual(result[2], [manufacturerAddress, workshopAddress1], "Did not return correct ownersList");
+        assert.strictEqual(result[4], workshopAddress1, "Did not return correct currOwner");
+        for (var i = 0; i < result[3].length; i++) {
+            assert.deepEqual(
+                result[3][i],
+                arr[i],
+                'Did not return correct serviceRecords'
+            );
+        } 
+    });
+
     // #region Helper methods
     async function registerOwner1() {
         await carNetworkInstance.register(ownerAddress1, "Owner", {
