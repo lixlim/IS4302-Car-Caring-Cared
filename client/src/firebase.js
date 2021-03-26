@@ -1,6 +1,4 @@
-import firebase from "firebase/app"
-import "firebase/database";
-import "firebase/auth";
+import firebase from "firebase/app";
 
 var firebaseConfig = {
     apiKey: "AIzaSyAN_u2iHxqXw6-TaLlZEFApLudv0_6b1T8",
@@ -13,4 +11,17 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-export default firebase.database();
+// eslint-disable-next-line no-restricted-globals
+if (location.hostname === 'localhost') {
+    db.useEmulator('localhost', 8080);
+    auth().useEmulator('http://localhost:9099/', { disableWarnings: true });
+}
+
+
+if (location.hostname === "localhost") {
+  // Point to the RTDB emulator running on localhost.
+  firebase.database().useEmulator("localhost", 9000);
+  firebase.auth.useEmulator('http://localhost:9099/', { disableWarnings: true });
+} 
+
+export default firebase;
