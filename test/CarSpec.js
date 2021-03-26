@@ -13,10 +13,10 @@ contract('Car', function (accounts) {
     var workshopAddress = accounts[4];
     // #endregion
     // #region Fake car details
-    const vin1 = "A0000";
-    const vin2 = "A1111";
-    const carModel1 = "fakeCarModel111";
-    const carModel2 = "fakeCarModel222";
+    const vin1 = "WBAAL32040AZ13247";
+    const vin2 = "WBAWL72030PZ84188";
+    const carModel1 = "Mercedes-Benz GLA180";
+    const carModel2 = "BMW 318i";
     const newCarPartServiceRecord1 = {
         createdBy: manufacturerAddress,
         createdOn: "01/01/21", carPart: "Engine", model: "model AAA",
@@ -41,7 +41,7 @@ contract('Car', function (accounts) {
         carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
         carInstance = await Car.new(carNetworkInstance.address);
     });
-
+/*
     it("Create car should work ", async () => {
         await registerManufacturer();
 
@@ -127,9 +127,7 @@ contract('Car', function (accounts) {
     it("Get car list from owner address after ownership transfer should work", async () => {
         await registerManufacturer();
         await createCar1();
-        await carInstance.transferCar(vin1, ownerAddress, {
-            from: manufacturerAddress
-        });
+        await transferCar(vin1, manufacturerAddress, ownerAddress);
         var result = await carInstance.getCarsList({
             from: ownerAddress
         });
@@ -149,13 +147,11 @@ contract('Car', function (accounts) {
         )
     });
 
-    it("Get car list from owner address after ownership transfer should work", async () => {
+    it("Get manufactured car list from manufacturer address after ownership transfer should work", async () => {
         await registerManufacturer();
         await createCar1();
         await createCar2();
-        await carInstance.transferCar(vin1, ownerAddress, {
-            from: manufacturerAddress
-        });
+        await transferCar(vin1, manufacturerAddress, ownerAddress);
         var result = await carInstance.getManufacturedCarsList({
             from: manufacturerAddress
         });
@@ -225,5 +221,5 @@ contract('Car', function (accounts) {
             from: from
         })
     }
-
+*/
 });

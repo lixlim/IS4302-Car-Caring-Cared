@@ -7,8 +7,8 @@ import "./CarNetwork.sol";
 contract Car {
 
     CarNetwork carNetwork;
-    mapping(string => car) carMap; //the string here refers to VIN car number
-    mapping(string => bool) carExistMap; 
+    mapping(string => car) public carMap; //the string here refers to VIN car number
+    mapping(string => bool) public carExistMap; 
     struct car {
         string carModel;
         address[] ownersList; // first is manufacturer, last is currOwner
