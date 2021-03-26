@@ -23,7 +23,8 @@ contract CarMarket {
     event Debug(string str);
     
     modifier carExist(string memory vin) {
-        require(car.carExistMap(vin), "Vin number does not exist");
+        require(true);
+        //require(car.carExistMap(vin), "Vin number does not exist");
         _;
     }
 

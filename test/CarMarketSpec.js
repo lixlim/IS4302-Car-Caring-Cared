@@ -19,24 +19,11 @@ contract('CarMarket', function (accounts) {
     const carModel2 = "BMW 318i";
     const price1 = 90000;
     const price2 = 60000;
-    const newCarPartServiceRecord1 = {
+    const newCarServiceRecord1 = {
         createdBy: manufacturerAddress,
-        createdOn: "01/01/21", carPart: "Engine", model: "model AAA",
-        batchNo: "batch 000", comment: "create car, add engine"
+        createdOn: "01/01/21",
+        comment: "create car, and whatever else comment is to be added by the manufacturer"
     };
-    const newCarPartServiceRecord2 = {
-        createdBy: manufacturerAddress,
-        createdOn: "01/01/21", carPart: "Wheel", model: "model BBB",
-        batchNo: "batch 000", comment: "create car, add wheel"
-    };
-    const newCarPartServiceRecord3 = {
-        createdBy: manufacturerAddress,
-        createdOn: "01/01/21", carPart: "Light", model: "model CCC",
-        batchNo: "batch 000", comment: "create car, add light"
-    };
-    const newCarPartList1 = [
-        newCarPartServiceRecord1, newCarPartServiceRecord2, newCarPartServiceRecord3
-    ];
     // #endregion
 
     before(async () => {
@@ -45,6 +32,7 @@ contract('CarMarket', function (accounts) {
         carMarketInstance = await CarMarket.new(carInstance.address);
         await registerManufacturer();
         await createCar1();
+        await registerOwner();
         await transferCar(vin1, manufacturerAddress, ownerAddress);
     });
 
@@ -68,7 +56,7 @@ contract('CarMarket', function (accounts) {
     */
     it("List car should fail if vin does not exist", async () => {
         await truffleAssert.reverts(
-            carMarketInstance.list(vin2, 0, {
+            carMarketInstance.list(vin2, price1, {
                 from: manufacturerAddress
             }),
             "Vin number does not exist"
@@ -148,12 +136,12 @@ contract('CarMarket', function (accounts) {
         });
     };
     async function createCar1() {
-        await carInstance.createCar(vin1, carModel1, newCarPartList1, {
+        await carInstance.createCar(vin1, carModel1, newCarServiceRecord1, {
             from: manufacturerAddress
         });
     }
     async function createCar2() {
-        await carInstance.createCar(vin2, carModel2, newCarPartList1, {
+        await carInstance.createCar(vin2, carModel2, newCarServiceRecord1, {
             from: manufacturerAddress
         });
     }
