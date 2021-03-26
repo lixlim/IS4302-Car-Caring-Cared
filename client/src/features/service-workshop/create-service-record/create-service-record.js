@@ -118,6 +118,9 @@ class CreateServiceRecord extends Component {
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Servicing details</label>
+                  <p>
+                    Pleaase input information of maintenance or repair work done on the vehicle.
+                  </p>
                   <textarea  cols="10" rows="5" charswidth="23" class="form-control" required  onChange={this.handleChangeComment}/>
                 </div>
               </div>
