@@ -82,7 +82,8 @@ class App extends Component {
         accountAddress: this.state.accounts[i],
       }, (error) => {
         if (error) {
-          alert(dbAccounts[i] + "not initialised");
+          alert(dbAccounts[i] + "not initialised");    
+          return false;
         } else {
         }
       });
