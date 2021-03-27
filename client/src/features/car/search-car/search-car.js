@@ -81,6 +81,8 @@ class SearchCar extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+
+      //manually populate data
       // const user = await this.state.carNetwork.methods.register(
       //   accounts[0],
       //   "Manufacturer"
