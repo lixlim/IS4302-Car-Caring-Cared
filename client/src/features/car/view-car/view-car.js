@@ -8,8 +8,8 @@ class ViewCar extends Component {
       <div>  
         <div class="car-details-container">
           <h5>Car information</h5>
-          <div>Car Model: {this.props.carRecord.carModel}</div> 
-          <div>Car owner address: {this.props.carRecord.currOwner}</div> 
+          <div><strong>Car Model: </strong> {this.props.carRecord.carModel}</div> 
+          <div><strong>Car Owner Address: </strong> {this.props.carRecord.currOwner}</div> 
         </div>
         <div>
           <h5>Owner list</h5>
