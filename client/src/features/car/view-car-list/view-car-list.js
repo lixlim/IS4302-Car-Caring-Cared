@@ -1,4 +1,7 @@
 import React, { Component } from "react";
+import CarContract from "../../../contracts/Car.json";
+import CarNetworkContract from "../../../contracts/CarNetwork.json";
+import getWeb3 from "../../../getWeb3";
 import "./view-car-list.css";
 import Navbar from "../../main/navbar"
 
@@ -13,10 +16,13 @@ class ViewCarList extends Component {
         console.log(props)
         this.state = { totalCar: 0, cars: [{ name: "car1", carId: "12345", owner: "tom" }, { name: "car2", carId: "00001", owner: "tom" }] };
         console.log(this.state);
+        this.forceUpdate()
     }
 
-
     render() {
+        if (!this.state.web3) {
+            return <div>Loading Web3, accounts, and contract...</div>;
+        }
 
         const { totalCar, cars } = this.state;
 
