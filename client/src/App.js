@@ -6,7 +6,7 @@ import ViewOneCar from './features/car/view-car-list/view-car';
 class App extends Component {
   render() {
     return (
-      <div class="container">
+      <div className="container">
         <BrowserRouter>
           <Switch>
             <Route path="/viewCar/:id" component={ViewOneCar} />
