@@ -59,7 +59,8 @@ const Navbar = () => {
                 <div className="navbar-nav">
                     <br />
                     <li className="nav-item" style={{ color: "#ffffff" }}>Your Profile</li>
-                    <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Signed in as {userInfo && userInfo.name}</li>
+                    <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Signed in as {currentUser && currentUser.email}</li>
+                    <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Account name is {userInfo && userInfo.name}</li>
                     <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Ether account is {userInfo && userInfo.accountAddress}</li>
                     <br />
                     {menu}
