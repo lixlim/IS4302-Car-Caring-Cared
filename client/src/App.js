@@ -71,7 +71,6 @@ class App extends Component {
         if (error) {
           alert(dbAccounts[i] + "not initialised");
         } else {
-          alert(dbAccounts[i] + "initialised sucessfully");
         }
       });
     }
