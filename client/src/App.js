@@ -61,8 +61,6 @@ class App extends Component {
   };
 
   populateData() {
-    let value = sessionStorage.getItem('isDataPopulated');
-    console.log(value)
     if (!sessionStorage.getItem('isDataPopulated')) {
       console.log('test')
       let isFirebaseSuccess = this.populateDataInFirebase();
