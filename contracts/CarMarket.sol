@@ -19,7 +19,6 @@ contract CarMarket {
     constructor(Car c) public {
         car = c; 
         c.setCarMarket();
-        emit Debug("carmarket here");
     }   
 
     event listCar(string vin);
