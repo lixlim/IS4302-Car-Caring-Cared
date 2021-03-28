@@ -9,7 +9,6 @@ import ViewCarList from './features/car/view-car-list/view-car-list';
 import ViewOneCar from './features/car/view-car-list/view-car';
 import getWeb3 from "./getWeb3";
 import CarNetworkContract from "./contracts/CarNetwork.json";
-import firebase from 'firebase/app';
 
 
 class App extends Component {
@@ -22,12 +21,11 @@ class App extends Component {
   //update dealer account in Firebase db
   //update manufacturer account in Firebase db
   //update workshop account in Firebase db
-    state = {
-      web3: null,
-      accounts: null,
-      carNetworkContract: null
-    };
- 
+  state = {
+    web3: null,
+    accounts: null,
+  };
+
 
 
   componentDidMount = async () => {
@@ -63,33 +61,36 @@ class App extends Component {
   populateData() {
     if (!sessionStorage.getItem('isDataPopulated')) {
       console.log('test')
-      let isFirebaseSuccess = this.populateDataInFirebase();
+      // let isFirebaseSuccess = this.populateDataInFirebase();
       let isBlockchainSuccess = this.populateDataInBlockchain();
-      if (isFirebaseSuccess && isBlockchainSuccess) {
+      // if (isFirebaseSuccess && isBlockchainSuccess) {
+      //   sessionStorage.setItem("isDataPopulated", true)
+      // }
+      if (isBlockchainSuccess) {
         sessionStorage.setItem("isDataPopulated", true)
       }
     }
   }
 
-  populateDataInFirebase() {
-    console.log("firebase populate")
-    //uid in database - admin, buyer1, buyer2, dealer, manufacturer, workshop
-    const dbAccounts = ['cgsxJNLAXeVtEN2H8UxxmK271mE2', 'tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
-    for (var i = 0; i < 6; i++) {
-      firebase.database().ref('/accounts/' + dbAccounts[i]).update({
-        accountAddress: this.state.accounts[i],
-      }, (error) => {
-        if (error) {
-          alert(dbAccounts[i] + "not initialised");    
-          return false;
-        } else {
-        }
-      });
-    }
-    return true;
-  }
+  // populateDataInFirebase() {
+  //   console.log("firebase populate")
+  //   //uid in database - admin, buyer1, buyer2, dealer, manufacturer, workshop
+  //   const dbAccounts = ['cgsxJNLAXeVtEN2H8UxxmK271mE2', 'tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
+  //   for (let i = 0; i < 6; i++) {
+  //     firebase.database().ref('/accounts/' + dbAccounts[i]).update({
+  //       accountAddress: this.state.accounts[i],
+  //     }, (error) => {
+  //       if (error) {
+  //         alert(dbAccounts[i] + "not initialised");    
+  //         return false;
+  //       } else {
+  //       }
+  //     });
+  //   }
+  //   return true;
+  // }
 
-  populateDataInBlockchain = async() => {
+  populateDataInBlockchain = async () => {
     console.log("blockchain populate")
     const { accounts, carNetwork } = this.state;
     //accounts
@@ -127,7 +128,6 @@ class App extends Component {
 
     return dealerCreated && manufacturerCreated && workshopCreated
   }
-
 
   // firebase.database().ref('accounts/5KeM3N5akxTJPku1QAESVfRZkPH3').update({
   //   accountAddress: isAccounts,

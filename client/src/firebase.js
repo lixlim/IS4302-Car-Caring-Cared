@@ -15,8 +15,8 @@ firebase.initializeApp(firebaseConfig);
 
 // using the emulator
 
-if (window.location.hostname.includes('localhost')) {
-  firebase.database().useEmulator("localhost", 9000);
-}
+// if (window.location.hostname.includes('localhost')) {
+//   firebase.database().useEmulator("localhost", 9000);
+// }
 
 export default firebase.database();
