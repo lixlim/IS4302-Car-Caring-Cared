@@ -25,7 +25,7 @@ class App extends Component {
     state = {
       web3: null,
       accounts: null,
-      carNetworkContract: null,
+      carNetworkContract: null
     };
  
 
@@ -61,7 +61,18 @@ class App extends Component {
   };
 
   populateData() {
-    
+    if (!sessionStorage.getItem('isDataPopulated')) {
+      console.log('test')
+      let isFirebaseSuccess = this.populateDataInFirebase();
+      let isBlockchainSuccess = this.populateDataInBlockchain();
+      if (isFirebaseSuccess && isBlockchainSuccess) {
+        sessionStorage.setItem("isDataPopulated", true)
+      }
+    }
+  }
+
+  populateDataInFirebase() {
+    console.log("firebase populate")
     //uid in database - admin, buyer1, buyer2, dealer, manufacturer, workshop
     const dbAccounts = ['cgsxJNLAXeVtEN2H8UxxmK271mE2', 'tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
     for (var i = 0; i < 6; i++) {
@@ -69,13 +80,55 @@ class App extends Component {
         accountAddress: this.state.accounts[i],
       }, (error) => {
         if (error) {
-          alert(dbAccounts[i] + "not initialised");
+          alert(dbAccounts[i] + "not initialised");    
+          return false;
         } else {
         }
       });
     }
-
+    return true;
   }
+
+  populateDataInBlockchain = async() => {
+    console.log("blockchain populate")
+    const { accounts, carNetwork } = this.state;
+    //accounts
+    const dealerCreated = await carNetwork.methods.register(
+      accounts[3],
+      "Dealer",
+    ).send({ from: accounts[0] });
+
+    const manufacturerCreated = await carNetwork.methods.register(
+      accounts[4],
+      "Manufacturer",
+    ).send({ from: accounts[0] });
+
+    const workshopCreated = await carNetwork.methods.register(
+      accounts[5],
+      "Workshop",
+    ).send({ from: accounts[0] });
+
+    //check if create is successful
+    const dealer = await carNetwork.methods.returnRoleWithAccount(
+      accounts[3],
+    ).call({ from: accounts[0] });
+
+    const manufacturer = await carNetwork.methods.returnRoleWithAccount(
+      accounts[4],
+    ).call({ from: accounts[0] });
+
+    const workshop = await carNetwork.methods.returnRoleWithAccount(
+      accounts[5],
+    ).call({ from: accounts[0] });
+
+    console.log("dealer: ", dealer)
+    console.log("manufacturer: ", manufacturer)
+    console.log("workshop: ", workshop);
+
+    return dealerCreated && manufacturerCreated && workshopCreated
+  }
+
+
   // firebase.database().ref('accounts/5KeM3N5akxTJPku1QAESVfRZkPH3').update({
   //   accountAddress: isAccounts,
   // }, (error) => {
