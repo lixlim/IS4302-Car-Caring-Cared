@@ -64,6 +64,28 @@ contract('Car', function (accounts) {
         });
     });
 
+    it("Create second car should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+
+        var result1 = await carInstance.createCar(vin2, carModel2, newCarServiceRecord1, {
+                from: manufacturerAddress
+            });
+        truffleAssert.eventEmitted(result1, 'CreateCar', (ev) => {
+            return (ev.vin == vin2 &&
+                ev.carModel == carModel2 &&
+                ev.manufacturer == manufacturerAddress);
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin2 &&
+                ev.sr.createdBy == newCarServiceRecord1.createdBy &&
+                ev.sr.createdOn == newCarServiceRecord1.createdOn &&
+                ev.sr.comment == newCarServiceRecord1.comment);
+        });
+        var result = await carInstance.getCar(vin2);
+        assert.deepEqual(result[2], [manufacturerAddress], "Did not return correct ownersList for second car");
+    });
+
     it("Create car should fail from non-manufacturer", async () => {
         await registerOwner1();
 
@@ -421,17 +443,17 @@ contract('Car', function (accounts) {
         //console.log(result);
         arr = [
             [
-              '0x957D81bC193DdEf6595fCd43320af30d4d6E60e5',
+              manufacturerAddress.toString(),
               '01/01/21',
               'create car, and whatever else comment is to be added by the manufacturer'
             ],
             [
-              '0x64f31101dDCdfeAa243677e598D3dc0cAc634efe',
+              workshopAddress1.toString(),
               '02/02/21',
               'This comment is created workshopAddress1. serviceRecord1. Any text goes here'
             ],
             [
-              '0x64f31101dDCdfeAa243677e598D3dc0cAc634efe',
+              workshopAddress1.toString(),
               '03/03/21',
               'This comment is created workshopAddress1. serviceRecord2. Any text goes here'
             ]

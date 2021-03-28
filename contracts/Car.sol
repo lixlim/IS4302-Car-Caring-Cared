@@ -32,7 +32,7 @@ contract Car {
     }
     // new car template /////////////////
     address[] emptyOwnersArray;
-    car newCar = car("", emptyOwnersArray, 0);
+
     // car return model /////////////////
     struct simplifiedCar {
         string carModel;
@@ -87,13 +87,13 @@ contract Car {
         string memory newCarModel,
         serviceRecord memory newServiceRecord
     ) public onlyRole("Manufacturer") {
-        newCar.ownersList.push(msg.sender);
         ownerToCarsMap[msg.sender].push(newVin);
         manufacturerToCarsMap[msg.sender].push(newVin);
-
-        newCar.carModel = newCarModel;
         carExistMap[newVin] = true;
-        carMap[newVin] = newCar;
+
+        carMap[newVin].carModel =  newCarModel;
+        carMap[newVin].ownersList.push(msg.sender);
+        carMap[newVin].serviceRecordCount = 0;
 
         emit CreateCar(
             newVin,
