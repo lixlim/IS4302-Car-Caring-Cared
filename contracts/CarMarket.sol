@@ -5,6 +5,7 @@ import "./Car.sol";
 contract CarMarket {
     
     Car car;
+    address admin;
     string[] public carListings; //array of VINs
     mapping(string => uint32) public carPrices;
     
@@ -17,6 +18,7 @@ contract CarMarket {
 
     constructor(Car c) public {
         car = c; 
+        c.setCarMarket();
     }   
 
     event listCar(string vin);
@@ -52,7 +54,6 @@ contract CarMarket {
         }
         delete carPrices[vin];
         emit unlistCar(vin);
-        
     }
 
     function checkPrice(string memory vin) public view carExist(vin) returns(uint32) {
@@ -64,7 +65,7 @@ contract CarMarket {
         for (uint i = 0; i < carListings.length; i++){
             string memory vin = carListings[i];
             carList[i] = listedCar({
-                carModel: car.getCar(vin).carModel, 
+                carModel: car.getCarByVin(vin).carModel, 
                 carVin: vin, 
                 carPrice: carPrices[vin],
                 carOwner: car.getCurrentOwner(vin)
