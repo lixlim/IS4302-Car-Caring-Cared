@@ -2,8 +2,15 @@ import React, { Component } from "react";
 import './view-car.css';
 
 class ViewCar extends Component {
+  state = {prevOwnerList: null};
 
+  componentDidMount() {
+    this.setState({
+      prevOwnerList: this.props.carRecord.ownersList.filter(owner => owner !== this.props.carRecord.currOwner)
+    })
+  }
   render() {
+    console.log(this.state.prevOwnerList)
     return (
       <div>  
         <div class="car-details-container">
@@ -11,9 +18,9 @@ class ViewCar extends Component {
           <div><strong>Car Model: </strong> {this.props.carRecord.carModel}</div> 
           <div><strong>Car Owner Address: </strong> {this.props.carRecord.currOwner}</div> 
         </div>
-        <div>
-          <h5>Owner list</h5>
-        {this.props.carRecord.ownersList &&
+        <div class="car-details-container">
+          <h5>Previous Owner List</h5>
+        {this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 &&
             <table class="table table-bordered">
               <thead class="table-dark">
                 <tr>
@@ -21,7 +28,7 @@ class ViewCar extends Component {
                   <th>Owner address</th>
                 </tr>
               </thead>
-            {this.props.carRecord.ownersList && this.props.carRecord.ownersList.map((owner, index) => {
+            {this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 && this.state.prevOwnerList.map((owner, index) => {
             return  (
               <tr>
                 <td>{index + 1}</td>
@@ -30,8 +37,10 @@ class ViewCar extends Component {
             )})}
           </table>
           }
+          {this.state.prevOwnerList && this.state.prevOwnerList.length == 0 && 
+          <div>There are no previous owners.</div>}
         </div>
-        <div>
+        <div class="car-details-container">
           <h5>Service records</h5>
           {this.props.carRecord.serviceRecordList &&
             <table class="table table-bordered">
