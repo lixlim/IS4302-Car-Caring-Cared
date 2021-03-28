@@ -1,5 +1,6 @@
 var Car = artifacts.require('./Car');
 var CarNetwork = artifacts.require('./CarNetwork');
+var CarMarket = artifacts.require('./CarMarket');
 var assert = require("chai").assert;
 var truffleAssert = require('truffle-assertions');
 
@@ -13,16 +14,15 @@ contract('Car', function (accounts) {
     var manufacturerAddress = accounts[4];
     var dealerAddress1 = accounts[6];
     var workshopAddress1 = accounts[8];
-    var workshopAddress2 = accounts[9];
     // #endregion
     // #region Fake car details
-    const vin1 = "A0000";
-    const vin2 = "A1111";
+    const vin1 = "WBAAL32040AZ13247";
+    const vin2 = "WBAWL72030PZ84188";
     const vin3 = "A2222";
-    const vinList1 = [vin1 , vin2];
-    const vinList2 = [vin1 , vin2, vin3];
-    const carModel1 = "fakeCarModel111";
-    const carModel2 = "fakeCarModel222";
+    const carModel1 = "Mercedes-Benz GLA180";
+    const carModel2 = "BMW 318i";
+    const vinList1 = [vin1, vin2];
+    const vinList2 = [vin1, vin2, vin3];
     const newCarServiceRecord1 = {
         createdBy: manufacturerAddress,
         createdOn: "01/01/21",
@@ -38,6 +38,16 @@ contract('Car', function (accounts) {
         createdOn: "03/03/21",
         comment: "This comment is created workshopAddress1. serviceRecord2. Any text goes here"
     };
+    const newCarServiceRecord1Response = [
+        newCarServiceRecord1.createdBy, newCarServiceRecord1.createdOn, newCarServiceRecord1.comment];
+    const serviceRecord1Response = [
+        serviceRecord1.createdBy, serviceRecord1.createdOn, serviceRecord1.comment];
+    const serviceRecord2Response = [
+        serviceRecord2.createdBy, serviceRecord2.createdOn, serviceRecord2.comment];
+    const serviceRecordResponseList1 = [
+        newCarServiceRecord1Response, serviceRecord1Response, serviceRecord2Response];
+    const serviceRecordResponseList2 = [
+        newCarServiceRecord1Response, serviceRecord1Response];
     // #endregion
 
     beforeEach(async () => {
@@ -45,7 +55,7 @@ contract('Car', function (accounts) {
         carInstance = await Car.new(carNetworkInstance.address);
     });
 
-    it("Create car should work", async () => {
+    it("Create one car should work", async () => {
         await registerManufacturer();
 
         var result1 = await carInstance.createCar(vin1, carModel1, newCarServiceRecord1, {
@@ -54,10 +64,33 @@ contract('Car', function (accounts) {
         truffleAssert.eventEmitted(result1, 'CreateCar', (ev) => {
             return (ev.vin == vin1 &&
                 ev.carModel == carModel1 &&
-                ev.manufacturer == manufacturerAddress);
+                ev.manufacturer == manufacturerAddress &&
+                ev.numOwner == 1);
         });
         truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
             return (ev.vin == vin1 &&
+                ev.sr.createdBy == newCarServiceRecord1.createdBy &&
+                ev.sr.createdOn == newCarServiceRecord1.createdOn &&
+                ev.sr.comment == newCarServiceRecord1.comment);
+        });
+    });
+
+    it("Create second car should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+
+        var result1 = await carInstance.createCar(vin2, carModel2, newCarServiceRecord1, {
+                from: manufacturerAddress
+            });
+
+        truffleAssert.eventEmitted(result1, 'CreateCar', (ev) => {
+            return (ev.vin == vin2 &&
+                ev.carModel == carModel2 &&
+                ev.manufacturer == manufacturerAddress &&
+                ev.numOwner == 1);
+        });
+        truffleAssert.eventEmitted(result1, 'AddServiceRecord', (ev) => {
+            return (ev.vin == vin2 &&
                 ev.sr.createdBy == newCarServiceRecord1.createdBy &&
                 ev.sr.createdOn == newCarServiceRecord1.createdOn &&
                 ev.sr.comment == newCarServiceRecord1.comment);
@@ -130,7 +163,7 @@ contract('Car', function (accounts) {
 
     it("Workshop add service record should work", async () => {
         await registerManufacturer();
-        await registerWorkshop1();
+        await registerWorkshop();
         await createCar1();
         await transferCar(vin1, manufacturerAddress, workshopAddress1);
 
@@ -161,7 +194,7 @@ contract('Car', function (accounts) {
 
     it("Add service records should fail when car not owned by workshop", async () => {
         await registerManufacturer();
-        await registerWorkshop1();
+        await registerWorkshop();
         await createCar1();
  
         await truffleAssert.reverts(
@@ -180,21 +213,13 @@ contract('Car', function (accounts) {
         var result = await carInstance.getOwnedCarsList({
             from: manufacturerAddress
         });
-        assert.strictEqual(result[0][0],
-            carModel1,
-            "Does not match owner's currently owned car model"
+        assert.deepEqual(result[0],
+            [carModel1, vin1],
+            "Does not match owner's currently owned car"
         );
-        assert.strictEqual(result[0][1],
-            vin1,
-            "Does not match owner's currently owned car vin"
-        );
-        assert.strictEqual(result[1][0],
-            carModel2,
-            "Does not match owner's currently owned car model"
-        );
-        assert.strictEqual(result[1][1],
-            vin2,
-            "Does not match owner's currently owned car vin"
+        assert.deepEqual(result[1],
+            [carModel2, vin2],
+            "Does not match owner's currently owned car"
         );
         assert.strictEqual(result.length,
             2,
@@ -211,13 +236,9 @@ contract('Car', function (accounts) {
         var result = await carInstance.getOwnedCarsList({
             from: ownerAddress1
         });
-        assert.strictEqual(result[0][0],
-            carModel1,
-            "Does not match owner's currently owned car model"
-        );
-        assert.strictEqual(result[0][1],
-            vin1,
-            "Does not match owner's currently owned car vin"
+        assert.deepEqual(result[0],
+            [carModel1, vin1],
+            "Does not match owner's currently owned car"
         );
         assert.strictEqual(result.length,
             1,
@@ -232,7 +253,7 @@ contract('Car', function (accounts) {
         )
     });
 
-    it("Get car list from owner address after ownership transfer should work", async () => {
+    it("Get manufactured car list from manufacturer address after ownership transfer should work", async () => {
         await registerManufacturer();
         await registerOwner1();
         await createCar1();
@@ -241,30 +262,22 @@ contract('Car', function (accounts) {
 
         var result1 = await carInstance.getOwnedCarsList({
             from: manufacturerAddress
-        });
-        assert.strictEqual(result1[0][0],
-            carModel2,
-            "Does not match manufacturer's previously manufactured car model"
-        );
-        assert.strictEqual(result1[0][1],
-            vin2,
-            "Does not match manufacturer's previously manufactured car vin"
+        }); 
+        assert.deepEqual(result1[0],
+            [carModel2, vin2],
+            "Does not match manufacturer's previously manufactured car"
         );
         assert.strictEqual(result1.length,
             1,
-            "Number of cars return doesn't match"
+            "Does not match manufacturer's previously manufactured car"
         );
 
         var result2 = await carInstance.getOwnedCarsList({
             from: ownerAddress1
         });
-        assert.strictEqual(result2[0][0],
-            carModel1,
-            "Does not match manufacturer's previously manufactured car model"
-        );
-        assert.strictEqual(result2[0][1],
-            vin1,
-            "Does not match manufacturer's previously manufactured car vin"
+        assert.deepEqual(result2[0],
+            [carModel1, vin1],
+            "Does not match manufacturer's previously manufactured car"
         );
         assert.strictEqual(result2.length,
             1,
@@ -332,55 +345,9 @@ contract('Car', function (accounts) {
         );
     });
 
-    it("getCarsByVinList should work", async () => {
-        await registerManufacturer();
-        await registerOwner1();
-        await createCar1();
-        await createCar2();
-
-        var result = await carInstance.getCarsByVinList(vinList1,{
-            from: ownerAddress1
-        });
-        assert.deepEqual(result[0],
-            [carModel1, vin1],
-            "Does not match manufacturer's previously manufactured car details"
-        );
-        assert.deepEqual(result[1],
-            [carModel2, vin2],
-            "Does not match manufacturer's previously manufactured car details"
-        );
-        assert.strictEqual(result.length,
-            2,
-            "Number of cars return doesn't match"
-        );
-    });
-
-    it("getCarsByVinList should work with some wrong vin", async () => {
-        await registerManufacturer();
-        await registerOwner1();
-        await createCar1();
-        await createCar2();
-
-        var result = await carInstance.getCarsByVinList(vinList2,{
-            from: ownerAddress1
-        });
-        assert.deepEqual(result[0],
-            [carModel1, vin1],
-            "Does not match manufacturer's previously manufactured car details"
-        );
-        assert.deepEqual(result[1],
-            [carModel2, vin2],
-            "Does not match manufacturer's previously manufactured car details"
-        );
-        assert.strictEqual(result.length,
-            2,
-            "Number of cars return doesn't match"
-        );
-    });
-
     it("getCarServiceRecordByVin should work", async () => {
         await registerManufacturer();
-        await registerWorkshop1();
+        await registerWorkshop();
         await createCar1();
         await transferCar(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
@@ -389,21 +356,82 @@ contract('Car', function (accounts) {
         var result = await carInstance.getCarServiceRecordByVin(vin1,{
             from: workshopAddress1
         });
-        assert.deepEqual(result[0],
-            [newCarServiceRecord1.createdBy, newCarServiceRecord1.createdOn, newCarServiceRecord1.comment],
-            "serviceRecord doesn't match"
+        assert.deepEqual(result[0], newCarServiceRecord1Response, "serviceRecord doesn't match");
+        assert.deepEqual(result[1], serviceRecord1Response, "serviceRecord doesn't match");
+        assert.deepEqual(result[2], serviceRecord2Response, "serviceRecord doesn't match");
+        assert.strictEqual(result.length, 3, "Number of service record return doesn't match");
+    });
+
+    it("getCarByVin should work", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar2();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
+        await registerOwner1();
+
+        var result = await carInstance.getCarByVin(vin1, {
+            from: ownerAddress1
+        });
+        //console.log(result);
+        assert.strictEqual(result[0], vin1, "Did not return correct vin");
+        assert.strictEqual(result[1], carModel1, "Did not return correct model");
+        assert.deepEqual(result[2], [manufacturerAddress, workshopAddress1], "Did not return correct ownersList");
+        assert.strictEqual(result[4], workshopAddress1, "Did not return correct currOwner");
+        assert.deepEqual(result[3], serviceRecordResponseList1, "Did not return correct serviceRecords")
+    });
+
+    it("getCarByVin should work when called by CarMarket", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar2();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
+        var carMarketInstance = await CarMarket.new(carInstance.address);
+
+        var result = await carInstance.getCarByVin(vin1, {
+            from: carMarketInstance.address
+        });
+        assert.strictEqual(result[0], vin1, "Did not return correct vin");
+        assert.strictEqual(result[1], carModel1, "Did not return correct model");
+        assert.deepEqual(result[2], [manufacturerAddress, workshopAddress1], "Did not return correct ownersList");
+        assert.strictEqual(result[4], workshopAddress1, "Did not return correct currOwner");
+        assert.deepEqual(result[3], serviceRecordResponseList1, "Did not return correct serviceRecords")
+    });
+
+    it("getCarByVin should fail when car doesnt exist", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar2();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+
+        await truffleAssert.reverts(
+            carInstance.getCarByVin(vin3, {
+                from: workshopAddress1
+            }),
+            "Vin number does not exist"
         );
-        assert.deepEqual(result[1],
-            [serviceRecord1.createdBy, serviceRecord1.createdOn, serviceRecord1.comment],
-            "serviceRecord doesn't match"
-        );
-        assert.deepEqual(result[2],
-            [serviceRecord2.createdBy, serviceRecord2.createdOn, serviceRecord2.comment],
-            "serviceRecord doesn't match"
-        );
-        assert.strictEqual(result.length,
-            3,
-            "Number of service record return doesn't match"
+    });
+
+    it("getCarByVin should fail when called by non-registered", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar2();
+        await createCar1();
+        await transferCar(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+
+        await truffleAssert.reverts(
+            carInstance.getCarByVin(vin1, {
+                from: ownerAddress1
+            }),
+            "User not registered in system"
         );
     });
 
@@ -433,13 +461,8 @@ contract('Car', function (accounts) {
             from: carNetworkHostAddress
         });
     };
-    async function registerWorkshop1() {
+    async function registerWorkshop() {
         await carNetworkInstance.register(workshopAddress1, "Workshop", {
-            from: carNetworkHostAddress
-        });
-    };
-    async function registerWorkshop2() {
-        await carNetworkInstance.register(workshopAddress2, "Workshop", {
             from: carNetworkHostAddress
         });
     };
