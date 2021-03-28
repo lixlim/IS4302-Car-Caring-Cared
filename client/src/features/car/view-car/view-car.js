@@ -10,7 +10,6 @@ class ViewCar extends Component {
     })
   }
   render() {
-    console.log(this.state.prevOwnerList)
     return (
       <div>  
         <div class="car-details-container">
