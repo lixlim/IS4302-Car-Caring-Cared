@@ -24,27 +24,29 @@ const Navbar = () => {
             <>
                 <a className="nav-item nav-link" href="/">Create car</a>
                 <a className="nav-item nav-link" href="/viewCar">View list of cars created</a>
-                <a className="nav-item nav-link" href="/viewCar/:id">View car</a>
-                <a className="nav-item nav-link" href="/">Add car part</a>
+                <a className="nav-item nav-link" href="/">Search car</a>
                 <a className="nav-item nav-link" href="/">Marketplace</a>
+                <a className="nav-item nav-link" href="/">Transfer ownership</a>
             </>
         );
     } else if (sessionStorage.getItem('role') === 'Dealer') {
         menu = (<>
+            <a className="nav-item nav-link" href="/">Search car</a>
             <a className="nav-link" href="/viewCar">View list of cars owned</a>
-            <a className="nav-link" href="/viewCar/:id">View car</a>
             <a className="nav-item nav-link" href="/">Marketplace</a>
+            <a className="nav-item nav-link" href="/">Transfer ownership</a>
         </>);
     } else if (sessionStorage.getItem('role') === 'Workshop') {
         menu = (<div>
             <a className="nav-link" href="/">Create service record</a>
-            <a className="nav-link" href="/viewCar/:id">View car</a>
+            <a className="nav-link" href="/viewCar/:id">Search car</a>
         </div>)
     } else {
         menu = (<>
+            <a className="nav-item nav-link" href="/">Search car</a>
             <a className="nav-item nav-link" href="/viewCar">View list of cars owned</a>
-            <a className="nav-item nav-link" href="/viewCar/:id">View car</a>
             <a className="nav-item nav-link" href="/">Marketplace</a>
+            <a className="nav-item nav-link" href="/">Transfer ownership</a>
         </>
         );
     }
