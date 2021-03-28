@@ -9,6 +9,7 @@ import ViewCarList from './features/car/view-car-list/view-car-list';
 import ViewOneCar from './features/car/view-car-list/view-car';
 import AddCar from './features/car/add-car/add-car';
 import TransferOwnership from './features/car/transfer-ownership/transfer-ownership';
+import AuthoriseWorkshop from './features/car/authorise-workshop/authorise-workshop';
 class App extends Component {
 
   //create dealer in carNetwork
@@ -144,11 +145,9 @@ class App extends Component {
           <ProtectedRoute exact path="/test" component={Testpage} />
           <ProtectedRoute exact path="/viewCar/:id" component={ViewOneCar} />
           <ProtectedRoute exact path="/viewCar" component={ViewCarList} />
-          <Route path="/transfer-ownership" component={TransferOwnership}/>
-          <Route path="/add-car" component={AddCar}/>
-          <Route path="/viewCar/:id" component={ViewOneCar} />
-          <Route path="/viewCar" component={ViewCarList}/>
-        </AuthProvider>
+          <ProtectedRoute path="/transfer-ownership" component={TransferOwnership}/>
+          <ProtectedRoute path="/add-car" component={AddCar}/>
+      </AuthProvider>
       </BrowserRouter>
     );
   }
