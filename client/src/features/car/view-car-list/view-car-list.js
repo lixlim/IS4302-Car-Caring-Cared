@@ -9,7 +9,7 @@ import Navbar from "../../main/navbar"
 
 class ViewCarList extends Component {
     
-    state = { cars: null, carRecord: null, viewMore: false, list: false};
+    state = { cars: null, vin: null, carRecord: null, viewMore: false, list: false};
 
     //retriving data and setting list of cars for user
     constructor(props) {
@@ -93,6 +93,31 @@ class ViewCarList extends Component {
         this.setState({cars: carList});
         console.log(this.state);
     };
+
+    prepareView(carVin) {
+      console.log("Set carVin -> " + carVin + "::" + typeof(carVin));
+      this.setState({vin: carVin});
+      console.log(this.state);
+      this.callContract();
+    }
+
+    callContract = async() => {
+      try {
+        const { accounts, carContract } = this.state;
+        const carRecord = await carContract.methods.getCarByVin(
+          this.state.vin,
+        ).call();
+        console.log(carRecord)
+        if (carRecord) {
+          this.setState({
+            viewMore: true,
+            carRecord: carRecord
+          })
+        }
+      } catch (er) {
+        console.log(er)
+      }
+    }
     
     
     render() {
@@ -122,7 +147,8 @@ class ViewCarList extends Component {
                   <tr key={car.carVin}>
                       <td>{car.carVin}</td>
                       <td>{car.carModel}</td>
-                      <td><button onClick={() => this.setState({viewMore: true, carRecord: car})} className="btn btn-primary">view more</button></td>
+                      {/*td><button onClick={() => this.setState({viewMore: true, carRecord: car})} className="btn btn-primary">view more</button></td>*/}
+                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">view more</button></td>
                       <td><button onClick={() => console.log(car.carVin)} className="btn btn-success">List</button></td>
                       <td><button onClick={() => console.log("Go to authorize page")} className="btn btn-secondary">Authorize</button></td>
                   </tr>
@@ -134,8 +160,7 @@ class ViewCarList extends Component {
                 <ViewCar carRecord={this.state.carRecord}/>
               }
             </div>
-            }
-        </div>
+            
     );  
   }
 }
