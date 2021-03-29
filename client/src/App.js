@@ -10,6 +10,8 @@ import ViewOneCar from './features/car/view-car-list/view-car';
 import AddCar from './features/car/add-car/add-car';
 import TransferOwnership from './features/car/transfer-ownership/transfer-ownership';
 import AuthoriseWorkshop from './features/car/authorise-workshop/authorise-workshop';
+import CreateServiceRecord from './features/service-workshop/create-service-record/create-service-record';
+
 class App extends Component {
 
   //create dealer in carNetwork
