@@ -35,7 +35,7 @@ class SearchCar extends Component {
         formSubmission: false
       })
       const { accounts, carContract } = this.state;
-      const carRecord = await carContract.methods.getCar(
+      const carRecord = await carContract.methods.getCarByVin(
         this.state.vin,
       ).call({ from: accounts[0] });
       console.log(carRecord)
