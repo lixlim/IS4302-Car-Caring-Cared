@@ -2,10 +2,10 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import ViewCar from "../view-car/view-car"
 import "./view-car-list.css";
-import Navbar from "../../main/navbar"
-
+import {
+  Redirect
+} from "react-router-dom";
 
 class ViewCarList extends Component {
     
@@ -57,6 +57,10 @@ class ViewCarList extends Component {
         const {accounts, carContract, carNetwork} = this.state;
         
         try {
+           const user = await this.state.carNetwork.methods.register(
+            accounts[0],
+            "Manufacturer"
+          ).send({ from: accounts[0] });
           const carCreated1 = await carContract.methods.createCar(
             "VIN12345",
             "CarModel12345",
@@ -93,19 +97,19 @@ class ViewCarList extends Component {
         this.setState({cars: carList});
         console.log(this.state);
     };
-
+    
     prepareView(carVin) {
       console.log("Set carVin -> " + carVin + "::" + typeof(carVin));
       this.setState({vin: carVin});
       console.log(this.state);
-      this.callContract();
+      this.callContract(carVin);
     }
 
-    callContract = async() => {
+    callContract = async(carVin) => {
       try {
         const { accounts, carContract } = this.state;
         const carRecord = await carContract.methods.getCarByVin(
-          this.state.vin,
+          carVin,
         ).call();
         console.log(carRecord)
         if (carRecord) {
@@ -123,6 +127,15 @@ class ViewCarList extends Component {
     render() {
         if (!this.state.web3) {
             return <div>Loading Web3, accounts, and contract...</div>;
+        }
+
+        if (this.state.viewMore) {
+          return <Redirect
+          to={{
+            pathname: "/viewCar/" + this.state.vin,
+            state: { carRecord: this.state.carRecord }
+          }}
+          />
         }
 
         const { totalCar, cars } = this.state;
@@ -155,10 +168,6 @@ class ViewCarList extends Component {
                   )}
                 </tbody>
               </table>
-              {this.state.viewMore &&
-                
-                <ViewCar carRecord={this.state.carRecord}/>
-              }
             </div>
             
     );  
