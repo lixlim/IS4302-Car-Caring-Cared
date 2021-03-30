@@ -22,8 +22,7 @@ class AddCar extends Component {
     this.handleChangeCarModel = this.handleChangeCarModel.bind(this);
     this.handleChangeComment = this.handleChangeComment.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this)
-}
-
+  }
 
   handleChangeVIN(event) {
     this.setState({vin: event.target.value});
@@ -43,31 +42,32 @@ class AddCar extends Component {
   }
 
   callContract = async() => {
-    this.setState({
-      formSubmission: false
-    })
-    const { accounts, carContract } = this.state;
-    const serviceRecord = {
-      comment: this.state.comment,
-      createdBy: accounts[0],
-      createdOn: moment().format()
-    }
-
-    console.log(serviceRecord)
-    const carCreated = await carContract.methods.createCar(
-      this.state.vin,
-      this.state.carModel,
-      serviceRecord
-    ).send({ from: accounts[0] });
-    console.log(carCreated)
-    if (carCreated) {
+    try {
       this.setState({
-        formSubmission: true
+        formSubmission: false
       })
+      const { accounts, carContract } = this.state;
+      console.log(accounts[0])
+      const serviceRecord = {
+        comment: this.state.comment,
+        createdBy: accounts[0],
+        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
+      }
+      const carCreated = await carContract.methods.createCar(
+        this.state.vin,
+        this.state.carModel,
+        serviceRecord
+      ).send({ from: accounts[0] });
+      console.log(carCreated)
+      if (carCreated) {
+        this.setState({
+          formSubmission: true
+        })
+      }
+    } catch (er) {
+      this.setState({error: er});
+      console.log(er)
     }
-    // Get the value from the contract to prove it worked.
-    // const carCreated = await contract.methods.carMap(this.state.vin).call();
-
   }
 
   componentDidMount = async () => {
@@ -129,7 +129,7 @@ class AddCar extends Component {
                   <input class="form-control" required onChange={this.handleChangeCarModel}/>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Comments (if any)</label>
+                  <label class="form-label">Comment</label>
                   <input class="form-control" required onChange={this.handleChangeComment}/>
                 </div>
               </div>
@@ -138,8 +138,12 @@ class AddCar extends Component {
             </form>
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
                 A car record is successfully created!
-              </div>
-              }
+            </div>
+            }
+            {this.state.error && <div class="alert alert-danger" role="alert">
+              Error creating a car record.
+            </div>
+            }
           </div>
         </div>
       </div>

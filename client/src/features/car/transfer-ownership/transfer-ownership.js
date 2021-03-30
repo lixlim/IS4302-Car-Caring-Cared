@@ -34,20 +34,24 @@ class TransferOwnership extends Component {
   }
 
   callContract = async() => {
-    this.setState({
-      formSubmission: false
-    })
-    const { accounts, carContract } = this.state;
-    console.log(carContract)
-    const transferOwnership = await carContract.methods.transferCar(
-      this.state.vin,
-      this.state.newOwner,
-    ).send({ from: accounts[0] });
-    console.log(transferOwnership)
-    if (transferOwnership) {
+    try {
       this.setState({
-        formSubmission: true
+        formSubmission: false
       })
+      const { accounts, carContract } = this.state;
+      console.log(carContract)
+      const transferOwnership = await carContract.methods.transferCar(
+        this.state.vin,
+        this.state.newOwner,
+      ).send({ from: accounts[0] });
+      console.log(transferOwnership)
+      if (transferOwnership) {
+        this.setState({
+          formSubmission: true
+        })
+      }
+    } catch (er) {
+      this.setState({error: er})
     }
   }
 
@@ -115,7 +119,11 @@ class TransferOwnership extends Component {
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
                 The ownership of the car is transferred successfully!
               </div>
-              }
+            }
+            {this.state.error && <div class="alert alert-danger" role="alert">
+              Error in transferring ownership.
+            </div>
+            }
           </div>    
       </div>
     );

@@ -36,30 +36,31 @@ class CreateServiceRecord extends Component {
   }
 
   callContract = async() => {
-    this.setState({
-      formSubmission: false
-    })
-    const { accounts, carContract } = this.state;
-    const serviceRecord = {
-      comment: this.state.comment,
-      createdBy: accounts[0],
-      createdOn: moment().format()
-    }
-
-    console.log(serviceRecord)
-    const serviceRecordCreated = await carContract.methods.addServiceRecord(
-      this.state.vin,
-      serviceRecord
-    ).send({ from: accounts[0] });
-    console.log(serviceRecordCreated)
-    if (serviceRecordCreated) {
+    try {
       this.setState({
-        formSubmission: true
+        formSubmission: false
       })
+      const { accounts, carContract } = this.state;
+      const serviceRecord = {
+        comment: this.state.comment,
+        createdBy: accounts[0],
+        createdOn: moment().format()
+      }
+  
+      const serviceRecordCreated = await carContract.methods.addServiceRecord(
+        this.state.vin,
+        serviceRecord
+      ).send({ from: accounts[0] });
+      console.log(serviceRecordCreated)
+      if (serviceRecordCreated) {
+        this.setState({
+          formSubmission: true
+        })
+      }
+    } catch (er) {
+      this.setState({error: er});
+      console.log(er)
     }
-    // Get the value from the contract to prove it worked.
-    // const carCreated = await contract.methods.carMap(this.state.vin).call();
-
   }
 
 
@@ -131,6 +132,10 @@ class CreateServiceRecord extends Component {
                 The service record is updated successfully!
               </div>
               }
+            {this.state.error && <div class="alert alert-danger" role="alert">
+              Error creating a service record.
+            </div>
+            }
           </div>    
       </div>
     );
