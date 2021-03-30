@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import { Switch, Route, BrowserRouter } from "react-router-dom";
 import Login from './features/main/login/login';
 import ViewCarList from './features/car/view-car-list/view-car-list';
-import ViewOneCar from './features/car/view-car-list/view-car';
+import ViewOneCar from './features/car/view-car/view-car';
+import ListCar from './features/car/list-car/list-car';
+
 class App extends Component {
   render() {
     return (
@@ -11,6 +13,7 @@ class App extends Component {
           <Switch>
             <Route path="/viewCar/:id" component={ViewOneCar} />
             <Route path="/viewCar" component={ViewCarList}/>
+            <Route path="/listCar/:id" component={ListCar}/>
             <Route path="/" component={Login}/>
           </Switch>
         </BrowserRouter>
