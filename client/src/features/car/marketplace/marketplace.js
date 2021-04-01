@@ -83,34 +83,34 @@ class Marketplace extends Component {
         carMarket: carMarketInstance });
 
       //manually populate data
-      const carCreated1 = await this.state.carContract.methods.createCar(
-        "VIN12345",
-        "CarModel12345",
-        {
-          comment: "comment 2",
-          createdBy: accounts[0],
-          createdOn: "2020-02-21"
-        }
-      ).send({ from: accounts[0] });
-      const carCreated2 = await this.state.carContract.methods.createCar(
-        "VIN123456",
-        "CarModel123456",
-        {
-          comment: "comment 23",
-          createdBy: accounts[0],
-          createdOn: "2020-02-22"
-        }
-      ).send({ from: accounts[0] });
-      const listCar = await this.state.carMarket.methods.list(
-        "VIN123456",
-        1234567
-      ).send({ from: accounts[0] });
-      const listCar1 = await this.state.carMarket.methods.list(
-        "VIN12345",
-        12345678
-      ).send({ from: accounts[0] });
-      console.log(listCar)
-      console.log(listCar1)
+      // const carCreated1 = await this.state.carContract.methods.createCar(
+      //   "VIN12345",
+      //   "CarModel12345",
+      //   {
+      //     comment: "comment 2",
+      //     createdBy: accounts[0],
+      //     createdOn: "2020-02-21"
+      //   }
+      // ).send({ from: accounts[0] });
+      // const carCreated2 = await this.state.carContract.methods.createCar(
+      //   "VIN123456",
+      //   "CarModel123456",
+      //   {
+      //     comment: "comment 23",
+      //     createdBy: accounts[0],
+      //     createdOn: "2020-02-22"
+      //   }
+      // ).send({ from: accounts[0] });
+      // const listCar = await this.state.carMarket.methods.list(
+      //   "VIN123456",
+      //   1234567
+      // ).send({ from: accounts[0] });
+      // const listCar1 = await this.state.carMarket.methods.list(
+      //   "VIN12345",
+      //   12345678
+      // ).send({ from: accounts[0] });
+      // console.log(listCar)
+      // console.log(listCar1)
       const allListedCars = await this.state.carMarket.methods.getAllListedCars(
       ).call({ from: accounts[0] });
       this.setState({
@@ -158,7 +158,7 @@ class Marketplace extends Component {
     if (this.state.viewMore) {
       return <Redirect
       to={{
-        pathname: "/viewCar/" + this.state.vin,
+        pathname: "/view-car/" + this.state.vin,
         state: { carRecord: this.state.carRecord }
       }}
       />

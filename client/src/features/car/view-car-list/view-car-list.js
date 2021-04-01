@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import ViewCar from "../view-car/view-car"
 import { Link } from 'react-router-dom'
 import "./view-car-list.css";
 import {
@@ -57,37 +56,8 @@ class ViewCarList extends Component {
     }
 
     preload = async () => {
-        const {accounts, carContract, carNetwork, carMarketContract} = this.state;
-        /*
-        try {
-          const carCreated1 = await carContract.methods.createCar(
-            "VIN12345",
-            "CarModel12345",
-            {
-              comment: "comment 2",
-              createdBy: accounts[0],
-              createdOn: "2020-02-21"
-            }
-          ).send({ from: accounts[0] });
-          console.log(carCreated1);
-
-          const carCreated2 = await carContract.methods.createCar(
-            "VIN12340",
-            "CarModel111",
-            {
-              comment: "comment 2",
-              createdBy: accounts[0],
-              createdOn: "2020-02-21"
-            }
-          ).send({ from: accounts[0] });
-          console.log(carCreated2);
-          
-        } catch(e) {
-          console.log(e);
-        }
-        */
-        //Check user role
-        //Manufactorer will call getManufacturedCarsList
+      const {accounts, carContract} = this.state;
+      try {
         const carList = await carContract.methods.getOwnedCarsList().call({ from: accounts[0] });
         if(carList) {
           console.log("success");
@@ -95,6 +65,9 @@ class ViewCarList extends Component {
         console.log(carList);
         this.setState({cars: carList});
         console.log(this.state);
+      } catch (er) {
+        console.log(er)
+      }
     };
     
     prepareView(carVin) {
@@ -131,7 +104,7 @@ class ViewCarList extends Component {
         if (this.state.viewMore) {
           return <Redirect
           to={{
-            pathname: "/viewCar/" + this.state.vin,
+            pathname: "/view-car/" + this.state.vin,
             state: { carRecord: this.state.carRecord }
           }}
           />
@@ -162,10 +135,9 @@ class ViewCarList extends Component {
                   <tr key={car.carVin}>
                       <td>{car.carVin}</td>
                       <td>{car.carModel}</td>
-                      {/*td><button onClick={() => this.setState({viewMore: true, carRecord: car})} className="btn btn-primary">view more</button></td>*/}
-                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">view more</button></td>
-                      <td><Link to={`/listCar/${car.carVin}`} className="btn btn-success">List/Unlist</Link></td>
-                      <td><button onClick={() => console.log("Go to authorize page")} className="btn btn-secondary">Authorize</button></td>
+                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
+                      <td><Link  to={`/listCar/${car.carVin}`}  className="btn btn-success">List/Unlist</Link></td>
+                      <td><Link  to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link></td>
                   </tr>
                   )}
                 </tbody>

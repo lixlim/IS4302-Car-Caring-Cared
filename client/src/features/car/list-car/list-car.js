@@ -136,6 +136,12 @@ class ListCar extends Component {
     const { marketValue } = this.state;
     return (
         <div class="main">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/view-car">Car List</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{this.state.vin}</li>
+                </ol>
+            </nav>
             {marketValue == 0 &&
             <div>
                 <h1>Listing for Car : {this.state.vin}</h1>
@@ -163,7 +169,7 @@ class ListCar extends Component {
             {marketValue > 0 &&
             <div>
             <h1>Listing for Car : {this.state.vin}</h1>
-            <h2>List at: {this.state.marketValue}</h2>
+            <h2>List at: ${this.state.marketValue}</h2>
             <div class="form-container">
                 <form onSubmit={this.unlistCar}>
                     <button type="submit" class="btn btn-primary">Unlist</button>

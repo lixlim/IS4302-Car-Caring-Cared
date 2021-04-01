@@ -15,13 +15,8 @@ class AuthoriseWorkshop extends Component {
       vin: null,
       newOwner: null 
     };
-    this.handleChangeVIN = this.handleChangeVIN.bind(this)
     this.handleChangeNewOwner = this.handleChangeNewOwner.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-  }
-
-  handleChangeVIN(event) {
-    this.setState({vin: event.target.value});
   }
 
   handleChangeNewOwner(event) {
@@ -76,7 +71,9 @@ class AuthoriseWorkshop extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+      let url = window.location.pathname.split('/');
+      this.setState({ vin:url[2], web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+      console.log(this.state.web3, "")
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -92,6 +89,12 @@ class AuthoriseWorkshop extends Component {
     }
     return (
       <div class="main">   
+       <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/view-car">Car List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{this.state.vin}</li>
+        </ol>
+        </nav>
         <h1>Authorise Service Workshop</h1>    
         <p>
           Authorise Service Workshops to add service records for your car.
@@ -101,8 +104,7 @@ class AuthoriseWorkshop extends Component {
             <div class="form-sub-container">
               <div>
                 <div class="mb-3">
-                  <label class="form-label">Vehicle Identification Number (VIN)</label>
-                  <input class="form-control" required onChange={this.handleChangeVIN}/>
+                  <label class="form-label">Vehicle Identification Number (VIN): {this.state.vin}</label>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Service Workshop Address</label>
