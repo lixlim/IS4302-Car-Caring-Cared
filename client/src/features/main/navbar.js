@@ -12,16 +12,17 @@ class Navbar extends Component {
         super(props);
         this.state = { isLoggedOut: false, role: null, web3: null, accounts: null, carNetwork: null };
         this.handleLogout = this.handleLogout.bind(this);
+        this.getRoles = this.getRoles.bind(this);
     }
 
     componentDidMount = async () => {
+
         try {
             // Get network provider and web3 instance.
             const web3 = await getWeb3();
 
             // Use web3 to get the user's accounts.
             const accounts = await web3.eth.getAccounts();
-            console.log(accounts)
 
             // Get the contract instance.
             const networkId = await web3.eth.net.getId();
@@ -51,10 +52,6 @@ class Navbar extends Component {
         const { accounts, carNetwork } = this.state;
 
         try {
-            const dealerCreated = await carNetwork.methods.register(
-                accounts[0],
-                "Manufacturer",
-            ).send({ from: accounts[0] });
             const role = await carNetwork.methods.returnRoleWithAccount(
                 accounts[0],
             ).call({ from: accounts[0] });
