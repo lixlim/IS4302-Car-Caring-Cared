@@ -1,28 +1,27 @@
 import React, { Component } from "react";
-import { useAuth } from "./authprovider";
+import { AuthContext } from "./authprovider";
 import { Redirect } from 'react-router-dom';
 import getWeb3 from "../../getWeb3";
 import CarNetworkContract from "../../contracts/CarNetwork.json";
 
 class Navbar extends Component {
 
+    static contextType = AuthContext
+
     constructor(props) {
         super(props);
-        this.state = { user:null, isLoggedOut: false, web3: null, accounts: null, role: null };
-
+        this.state = { isLoggedOut: false, role: null, web3: null, accounts: null, carNetwork: null };
         this.handleLogout = this.handleLogout.bind(this);
     }
 
-    static contextType = useAuth;
-    
     componentDidMount = async () => {
-        this.setState({user: this.context.currentUser});
         try {
             // Get network provider and web3 instance.
             const web3 = await getWeb3();
 
             // Use web3 to get the user's accounts.
             const accounts = await web3.eth.getAccounts();
+            console.log(accounts)
 
             // Get the contract instance.
             const networkId = await web3.eth.net.getId();
@@ -35,7 +34,9 @@ class Navbar extends Component {
 
             // Set web3, accounts, and contract to the state, and then proceed with an
             // example of interacting with the contract's methods.
-            this.setState({ web3, accounts, carNetwork: carNetworkInstance }, this.getRoles);
+            console.log("Navbar")
+            this.setState({ web3, accounts, carNetwork: carNetworkInstance });
+            this.getRoles();
         } catch (error) {
             // Catch any errors for any of the above operations.
             alert(
@@ -45,19 +46,28 @@ class Navbar extends Component {
         }
     };
 
-    getRoles = async() => {
-        console.log("getRoles");
-        const { accounts, carNetwork } = this.state;
-        const role = await carNetwork.methods.returnRoleWithAccount(
-            accounts[0],
-        ).call({ from: accounts[0]});
-        this.setState({role:role});
-    }
+    getRoles = async () => {
 
+        const { accounts, carNetwork } = this.state;
+
+        try {
+            const dealerCreated = await carNetwork.methods.register(
+                accounts[0],
+                "Manufacturer",
+            ).send({ from: accounts[0] });
+            const role = await carNetwork.methods.returnRoleWithAccount(
+                accounts[0],
+            ).call({ from: accounts[0] });
+            console.log(role)
+            this.setState({ role: role });
+        } catch (er) {
+            console.log(er)
+        }
+    }
 
     handleLogout = async () => {
         try {
-            await this.context.logout
+            await this.context.logout()
             console.log("logout fired")
             this.setState({ isLoggedOut: true })
         } catch (error) {
@@ -70,6 +80,8 @@ class Navbar extends Component {
         if (this.state.isLoggedOut) {
             return <Redirect to="/login" />
         }
+
+        const obj = this.context
 
         let menu;
 
@@ -115,7 +127,7 @@ class Navbar extends Component {
                     <div className="navbar-nav">
                         <br />
                         <li className="nav-item" style={{ color: "#ffffff" }}>Your Profile</li>
-                        <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Signed in as {this.user && this.user.email}</li>
+                        <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Signed in as {obj.currentUser && obj.currentUser.email}</li>
                         <br />
                         {menu}
 

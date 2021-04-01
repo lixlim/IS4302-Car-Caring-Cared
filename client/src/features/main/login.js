@@ -26,7 +26,7 @@ const Login = () => {
       setError("")
       setLoading(true);
       await login(username, password);
-      console.log("login fired")
+      console.log("login fired");
       history.push("/")
     } catch {
       setError("Please login with the right credentials")

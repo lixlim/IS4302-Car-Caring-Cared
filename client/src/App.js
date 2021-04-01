@@ -26,51 +26,49 @@ class App extends Component {
     accounts: null,
   };
 
+  // componentDidMount = async () => {
+  //   try {
+  //     // Get network provider and web3 instance.
+  //     const web3 = await getWeb3();
 
+  //     // Use web3 to get the user's accounts.
+  //     const accounts = await web3.eth.getAccounts();
 
-  componentDidMount = async () => {
-    try {
-      // Get network provider and web3 instance.
-      const web3 = await getWeb3();
+  //     // Get the contract instance.
+  //     const networkId = await web3.eth.net.getId();
+  //     const deployedCarNetwork = CarNetworkContract.networks[networkId];
 
-      // Use web3 to get the user's accounts.
-      const accounts = await web3.eth.getAccounts();
+  //     const carNetworkInstance = new web3.eth.Contract(
+  //       CarNetworkContract.abi,
+  //       deployedCarNetwork && deployedCarNetwork.address,
+  //     );
 
-      // Get the contract instance.
-      const networkId = await web3.eth.net.getId();
-      const deployedCarNetwork = CarNetworkContract.networks[networkId];
+  //     // Set web3, accounts, and contract to the state, and then proceed with an
+  //     // example of interacting with the contract's methods.
+  //     this.setState({ web3, accounts, carNetwork: carNetworkInstance }, this.populateData);
+  //     console.log("callFirebase");
+  //   } catch (error) {
+  //     // Catch any errors for any of the above operations.
+  //     alert(
+  //       `Failed to load web3, accounts, or contract. Check console for details.`,
+  //     );
+  //     console.error(error);
+  //   }
+  // };
 
-      const carNetworkInstance = new web3.eth.Contract(
-        CarNetworkContract.abi,
-        deployedCarNetwork && deployedCarNetwork.address,
-      );
-
-      // Set web3, accounts, and contract to the state, and then proceed with an
-      // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, carNetwork: carNetworkInstance }, this.populateData);
-      console.log("callFirebase");
-    } catch (error) {
-      // Catch any errors for any of the above operations.
-      alert(
-        `Failed to load web3, accounts, or contract. Check console for details.`,
-      );
-      console.error(error);
-    }
-  };
-
-  populateData() {
-    if (!sessionStorage.getItem('isDataPopulated')) {
-      console.log('test')
-      // let isFirebaseSuccess = this.populateDataInFirebase();
-      let isBlockchainSuccess = this.populateDataInBlockchain();
-      // if (isFirebaseSuccess && isBlockchainSuccess) {
-      //   sessionStorage.setItem("isDataPopulated", true)
-      // }
-      if (isBlockchainSuccess) {
-        sessionStorage.setItem("isDataPopulated", true)
-      }
-    }
-  }
+  // populateData() {
+  //   if (!sessionStorage.getItem('isDataPopulated')) {
+  //     console.log('test')
+  //     // let isFirebaseSuccess = this.populateDataInFirebase();
+  //     let isBlockchainSuccess = this.populateDataInBlockchain();
+  //     // if (isFirebaseSuccess && isBlockchainSuccess) {
+  //     //   sessionStorage.setItem("isDataPopulated", true)
+  //     // }
+  //     if (isBlockchainSuccess) {
+  //       sessionStorage.setItem("isDataPopulated", true)
+  //     }
+  //   }
+  // }
 
   // populateDataInFirebase() {
   //   console.log("firebase populate")
@@ -90,44 +88,44 @@ class App extends Component {
   //   return true;
   // }
 
-  populateDataInBlockchain = async () => {
-    console.log("blockchain populate")
-    const { accounts, carNetwork } = this.state;
-    //accounts
-    const dealerCreated = await carNetwork.methods.register(
-      accounts[3],
-      "Dealer",
-    ).send({ from: accounts[0] });
+  // populateDataInBlockchain = async () => {
+  //   console.log("blockchain populate")
+  //   const { accounts, carNetwork } = this.state;
+  //   //accounts
+  //   const dealerCreated = await carNetwork.methods.register(
+  //     accounts[3],
+  //     "Dealer",
+  //   ).send({ from: accounts[0] });
 
-    const manufacturerCreated = await carNetwork.methods.register(
-      accounts[4],
-      "Manufacturer",
-    ).send({ from: accounts[0] });
+  //   const manufacturerCreated = await carNetwork.methods.register(
+  //     accounts[4],
+  //     "Manufacturer",
+  //   ).send({ from: accounts[0] });
 
-    const workshopCreated = await carNetwork.methods.register(
-      accounts[5],
-      "Workshop",
-    ).send({ from: accounts[0] });
+  //   const workshopCreated = await carNetwork.methods.register(
+  //     accounts[5],
+  //     "Workshop",
+  //   ).send({ from: accounts[0] });
 
-    //check if create is successful
-    const dealer = await carNetwork.methods.returnRoleWithAccount(
-      accounts[3],
-    ).call({ from: accounts[0] });
+  //   //check if create is successful
+  //   const dealer = await carNetwork.methods.returnRoleWithAccount(
+  //     accounts[3],
+  //   ).call({ from: accounts[0] });
 
-    const manufacturer = await carNetwork.methods.returnRoleWithAccount(
-      accounts[4],
-    ).call({ from: accounts[0] });
+  //   const manufacturer = await carNetwork.methods.returnRoleWithAccount(
+  //     accounts[4],
+  //   ).call({ from: accounts[0] });
 
-    const workshop = await carNetwork.methods.returnRoleWithAccount(
-      accounts[5],
-    ).call({ from: accounts[0] });
+  //   const workshop = await carNetwork.methods.returnRoleWithAccount(
+  //     accounts[5],
+  //   ).call({ from: accounts[0] });
 
-    console.log("dealer: ", dealer)
-    console.log("manufacturer: ", manufacturer)
-    console.log("workshop: ", workshop);
+  //   console.log("dealer: ", dealer)
+  //   console.log("manufacturer: ", manufacturer)
+  //   console.log("workshop: ", workshop);
 
-    return dealerCreated && manufacturerCreated && workshopCreated
-  }
+  //   return dealerCreated && manufacturerCreated && workshopCreated
+  // }
 
   // firebase.database().ref('accounts/5KeM3N5akxTJPku1QAESVfRZkPH3').update({
   //   accountAddress: isAccounts,
