@@ -15,11 +15,23 @@ class ViewOneCar extends Component {
     render() {
         return (
             <div class="main">
-                {this.state.carRecord &&
+                {this.state.carRecord && !this.state.carRecord.carPrice &&
                     <>
                         <nav aria-label="breadcrumb">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="/viewCar">View Car</a></li>
+                            <li class="breadcrumb-item"><a href="/viewCar">Car List</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">{this.state.carRecord.vin}</li>
+                        </ol>
+                        </nav>
+                        <h1>View Car Details </h1> 
+                        <ViewCar carRecord={this.state.carRecord}/>
+                    </>
+                }
+                 {this.state.carRecord && this.state.carRecord.carPrice &&
+                    <>
+                        <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/marketplace">Marketplace</a></li>
                             <li class="breadcrumb-item active" aria-current="page">{this.state.carRecord.vin}</li>
                         </ol>
                         </nav>

@@ -15,6 +15,7 @@ class ViewCar extends Component {
         <div class="car-details-container">
           <h5>Car information</h5>
           <div><strong>Car Model: </strong> {this.props.carRecord.carModel}</div> 
+          {this.props.carRecord.carPrice && <div><strong>Car Price: </strong>${this.props.carRecord.carPrice}</div>}
           <div><strong>Car Owner Address: </strong> {this.props.carRecord.currOwner}</div> 
         </div>
         <div class="car-details-container">

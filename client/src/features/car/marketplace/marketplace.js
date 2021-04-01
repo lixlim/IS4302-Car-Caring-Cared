@@ -3,10 +3,11 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import CarMarketContract from "../../../contracts/CarMarket.json";
-
 import getWeb3 from "../../../getWeb3";
 import './marketplace.css';
-
+import {
+  Redirect
+} from "react-router-dom";
 class Marketplace extends Component {
 
   constructor() {
@@ -16,21 +17,10 @@ class Marketplace extends Component {
       accounts: null, 
       carContract: null, 
       carNetworkContract: null,
-      vin: null,
-      newOwner: null 
+      carMarket: null
     };
-    this.handleChangeVIN = this.handleChangeVIN.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  handleChangeVIN(event) {
-    this.setState({vin: event.target.value});
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-    this.callContract();
-  }
 
   callContract = async() => {
     try {
@@ -140,7 +130,43 @@ class Marketplace extends Component {
     }
   };
 
+  prepareView(carVin) {
+    console.log("Set carVin -> " + carVin + "::" + typeof(carVin));
+    this.setState({vin: carVin});
+    console.log(this.state);
+    this.callContract(carVin);
+  }
+
+  callContract = async(carVin) => {
+    try {
+      const { accounts, carContract, carMarket } = this.state;
+      const carRecord = await carContract.methods.getCarByVin(
+        carVin,
+      ).call();
+      const carPrice = await carMarket.methods.checkPrice(
+        carVin,
+      ).call();
+      console.log(carPrice)
+      if (carRecord && carPrice) {
+        this.setState({
+          viewMore: true,
+          carRecord: { ...carRecord, carPrice}
+        })
+      }
+    } catch (er) {
+      console.log(er)
+    }
+  }
+
   render() {
+    if (this.state.viewMore) {
+      return <Redirect
+      to={{
+        pathname: "/viewCar/" + this.state.vin,
+        state: { carRecord: this.state.carRecord }
+      }}
+      />
+    }
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
@@ -171,7 +197,7 @@ class Marketplace extends Component {
                 <td>${listedCar.carPrice}</td>
                 <td>{listedCar.carOwner}</td>
                 <td>
-                <button onClick={() => console.log(listedCar.carVin)} class="btn btn-primary">view more</button>
+                <button onClick={() => this.prepareView(listedCar.carVin)} class="btn btn-primary">View more</button>
                 </td>
               </tr>
             )})}
