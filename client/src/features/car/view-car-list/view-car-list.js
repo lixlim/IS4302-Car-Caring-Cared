@@ -3,6 +3,7 @@ import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
 import ViewCar from "../view-car/view-car"
+import { Link } from 'react-router-dom'
 import "./view-car-list.css";
 
 
@@ -13,37 +14,37 @@ class ViewCarList extends Component {
     //retriving data and setting list of cars for user
     constructor(props) {
         super(props);
-        this.preload();
         console.log(this.state);
-        this.forceUpdate()
+        //this.forceUpdate();
     }
 
-    preload = async () => {
-        try {
-          // Get network provider and web3 instance.
-          const web3 = await getWeb3();
-    
-          // Use web3 to get the user's accounts.
-          const accounts = await web3.eth.getAccounts();
-    
-          // Get the contract instance.
-          const networkId = await web3.eth.net.getId();
-          const deployedCarContract = CarContract.networks[networkId];
-          const deployedCarNetwork = CarNetworkContract.networks[networkId];
-    
-          const carContractInstance = new web3.eth.Contract(
+    componentDidMount = async () => {
+      try {
+        // Get network provider and web3 instance.
+        const web3 = await getWeb3();
+
+        // Use web3 to get the user's accounts.
+        const accounts = await web3.eth.getAccounts();
+
+        // Get the contract instance.
+        const networkId = await web3.eth.net.getId();
+        const deployedCarContract = CarContract.networks[networkId];
+        const deployedCarNetwork = CarNetworkContract.networks[networkId];
+
+        const carContractInstance = new web3.eth.Contract(
             CarContract.abi,
             deployedCarContract && deployedCarContract.address,
-          );
-    
-          const carNetworkInstance = new web3.eth.Contract(
+        );
+
+        const carNetworkInstance = new web3.eth.Contract(
             CarNetworkContract.abi,
             deployedCarNetwork && deployedCarNetwork.address,
-          );
+        );
     
           // Set web3, accounts, and contract to the state, and then proceed with an
           // example of interacting with the contract's methods.
           this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+          this.preload();
         } catch (error) {
           // Catch any errors for any of the above operations.
           alert(
@@ -51,9 +52,11 @@ class ViewCarList extends Component {
           );
           console.error(error);
         }
+    }
 
-        const {accounts, carContract, carNetwork} = this.state;
-        
+    preload = async () => {
+        const {accounts, carContract, carNetwork, carMarketContract} = this.state;
+        /*
         try {
           const carCreated1 = await carContract.methods.createCar(
             "VIN12345",
@@ -80,7 +83,7 @@ class ViewCarList extends Component {
         } catch(e) {
           console.log(e);
         }
-        
+        */
         //Check user role
         //Manufactorer will call getManufacturedCarsList
         const carList = await carContract.methods.getOwnedCarsList().call();
@@ -120,7 +123,7 @@ class ViewCarList extends Component {
     
     render() {
         if (!this.state.web3) {
-            return <div>Loading Web3, accounts, and contract...</div>;
+          return <div>Loading Web3, accounts, and contract...</div>;
         }
 
         const { totalCar, cars } = this.state;
@@ -149,7 +152,7 @@ class ViewCarList extends Component {
                       <td>{car.carModel}</td>
                       {/*td><button onClick={() => this.setState({viewMore: true, carRecord: car})} className="btn btn-primary">view more</button></td>*/}
                       <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">view more</button></td>
-                      <td><button onClick={() => console.log(car.carVin)} className="btn btn-success">List</button></td>
+                      <td><Link to={`/listCar/${car.carVin}`} className="btn btn-success">List/Unlist</Link></td>
                       <td><button onClick={() => console.log("Go to authorize page")} className="btn btn-secondary">Authorize</button></td>
                   </tr>
                   )}
