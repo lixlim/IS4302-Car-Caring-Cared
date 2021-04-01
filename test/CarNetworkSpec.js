@@ -15,7 +15,7 @@ contract('CarNetwork', function (accounts) {
         carNetworkInstance = await CarNetwork.new(carNetworkHostAddress);
         carInstance = await Car.new(carNetworkInstance.address);
     });
-/*
+
     it("Register new Owner should work ", async () => {
         var result1 = await carNetworkInstance.register(ownerAddress, "Owner", {
             from: carNetworkHostAddress
@@ -104,14 +104,9 @@ contract('CarNetwork', function (accounts) {
     });
 
     it("Return Role with address should fail", async () => {
-        let result;
-        try {
-            result = await carNetworkInstance.returnRoleWithAccount(accounts[5]);
-        } catch (e) {}
-        assert.equal(
-            result,
-            undefined,
-            "Should throw error when user is not registered"
+        await truffleAssert.reverts(
+            carNetworkInstance.returnRoleWithAccount(accounts[5]),
+            "User not registered in system"
         );
     });
 
@@ -135,5 +130,4 @@ contract('CarNetwork', function (accounts) {
             from: carNetworkHostAddress
         });
     };
-*/
 });

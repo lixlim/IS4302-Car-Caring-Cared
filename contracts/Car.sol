@@ -1,47 +1,45 @@
 pragma solidity ^0.5.0;
-pragma experimental ABIEncoderV2; //use this to return struct 
+pragma experimental ABIEncoderV2; //use this to return struct
 import "./CarNetwork.sol";
+
 // https://ethereum.stackexchange.com/questions/69077/how-can-i-return-dynamic-string-array-in-solidity
 // https://docs.soliditylang.org/en/v0.5.2/abi-spec.html?highlight=abiencoderv2
 
 contract Car {
-
     CarNetwork carNetwork;
-    mapping(string => car) carMap; //the string here refers to VIN car number
-    mapping(string => bool) carExistMap; 
+    address carMarketAddress; 
+    bool setCarMarketBool = false;
+    mapping(string => car) private carMap; //the string here refers to VIN car number
+    mapping(string => bool) private carExistMap;
+    mapping(address => string[]) private ownerToCarsMap;
+    mapping(address => string[]) private manufacturerToCarsMap;
+
     struct car {
         string carModel;
         address[] ownersList; // first is manufacturer, last is currOwner
-        string[] carPartsList; //the list of keys for the carPartsMapping
-        mapping (string => serviceRecord[]) carPartsServiceRecordMapping;
-    }
-    struct simplifiedCar{
-        string carModel;
-        string carVin;
+        uint256 serviceRecordCount;
+        mapping(uint256 => serviceRecord) serviceRecordMap;
     }
     struct serviceRecord {
         address createdBy;
-        string createdOn; 
-        string carPart;
-        string model;
-        string batchNo;
+        string createdOn;
         string comment;
     }
-    mapping (address => string[]) private ownerToCars;
-    mapping (address => string[]) private manufacturerToCars;
+    struct carView {
+        string vin;
+        string carModel;
+        address[] ownersList; // first is manufacturer, last is currOwner
+        serviceRecord[] serviceRecordList;
+        address currOwner;
+    }
+    struct simplifiedCar {
+        string carModel;
+        string carVin;
+    }
 
-    // new car template /////////////////
-    address[] emptyOwnersArray;
-    string[] emptyCarPartsListArray;
-    car newCar = car(
-        "",
-        emptyOwnersArray,
-        emptyCarPartsListArray
-    );
-    //////////////////////////////////////
-
-    event CreateCar(string vin, string carModel, address manufacturer, uint numCarParts);
+    event CreateCar(string vin, string carModel, address manufacturer, uint numOwner);
     event TransferCar(string vin, address prevOwner, address currOwner);
+    event AddServiceRecord(string vin, serviceRecord sr);
     event Debug(string str);
 
     constructor(CarNetwork cn) public {
@@ -58,51 +56,73 @@ contract Car {
         _;
     }
 
-    modifier onlyCurrOwner(string memory vin) {
-        uint arrLength = carMap[vin].ownersList.length;
-        require(msg.sender == carMap[vin].ownersList[arrLength-1], "Require car's current owner");
+    modifier userExist(address user) {
+        require(carMarketAddress == msg.sender || //special case when getCarByVin called by carMarket
+                carNetwork.checkRole(user, "Owner") ||
+                carNetwork.checkRole(user, "Manufacturer") ||
+                carNetwork.checkRole(user, "Dealer") ||
+                carNetwork.checkRole(user, "Workshop"), "Transfering to non-existing address"
+        );
         _;
     }
-    
-    function createCar(string memory newVin, string memory newCarModel, 
-    serviceRecord[] memory newCarParts) 
+
+    modifier onlyCurrOwner(string memory vin) {
+        uint256 arrLength = carMap[vin].ownersList.length;
+        require(msg.sender == carMap[vin].ownersList[arrLength - 1], "Require car's current owner");
+        _;
+    }
+
+    modifier onlyOnceFromCarMarket(){
+        require(!setCarMarketBool, "only can set CarMarket address once");
+        _;
+    }
+
+    function createCar(string memory newVin, string memory newCarModel, serviceRecord memory newServiceRecord) 
     public onlyRole("Manufacturer") {
-        newCar.carModel = newCarModel;
-        newCar.ownersList.push(msg.sender);
-        carMap[newVin] = newCar;
+        ownerToCarsMap[msg.sender].push(newVin);
+        manufacturerToCarsMap[msg.sender].push(newVin);
         carExistMap[newVin] = true;
-        ownerToCars[msg.sender].push(newVin);
-        manufacturerToCars[msg.sender].push(newVin);
-        for(uint i = 0; i < newCarParts.length; i++){
-            carMap[newVin].carPartsList.push(newCarParts[i].carPart);
-            carMap[newVin].carPartsServiceRecordMapping[newCarParts[i].carPart].push(newCarParts[i]);
-        }
-        emit CreateCar(newVin, carMap[newVin].carModel, carMap[newVin].ownersList[0], newCarParts.length);
+
+        carMap[newVin].carModel =  newCarModel;
+        carMap[newVin].ownersList.push(msg.sender);
+        carMap[newVin].serviceRecordCount = 0;
+
+        emit CreateCar(newVin, carMap[newVin].carModel,
+        carMap[newVin].ownersList[0], carMap[newVin].ownersList.length);
+
+        internalAddServiceRecord(newVin, newServiceRecord);
     }
 
     function transferCar(string memory vin, address newOwner)
-    public carExist(vin) onlyCurrOwner(vin) {
-        uint arrLength = carMap[vin].ownersList.length;
-        address prevOwner = carMap[vin].ownersList[arrLength-1];
+    public carExist(vin) onlyCurrOwner(vin) userExist(newOwner) {
+        uint256 arrLength = carMap[vin].ownersList.length;
+        address prevOwner = carMap[vin].ownersList[arrLength - 1];
         carMap[vin].ownersList.push(newOwner);
         address currOwner = carMap[vin].ownersList[arrLength];
-        for ( uint i = 0; i < ownerToCars[msg.sender].length; i++){
-            if (keccak256(abi.encodePacked(ownerToCars[msg.sender][i])) == keccak256(abi.encodePacked(vin))){
-                ownerToCars[msg.sender][i] = ownerToCars[msg.sender][ownerToCars[msg.sender].length - 1]; //swap and delete
-                delete ownerToCars[msg.sender][ownerToCars[msg.sender].length - 1];
-                ownerToCars[msg.sender].length--;
+
+        for (uint256 i = 0; i < ownerToCarsMap[msg.sender].length; i++) {
+            if (keccak256(abi.encodePacked(ownerToCarsMap[msg.sender][i])) ==
+                keccak256(abi.encodePacked(vin))) {
+                ownerToCarsMap[msg.sender][i] = ownerToCarsMap[msg.sender][ownerToCarsMap[msg.sender].length - 1]; //swap and delete
+                delete ownerToCarsMap[msg.sender][ownerToCarsMap[msg.sender].length - 1];
+                ownerToCarsMap[msg.sender].length--;
                 break;
             }
         }
-        ownerToCars[newOwner].push(vin);
+        ownerToCarsMap[newOwner].push(vin);
         emit TransferCar(vin, prevOwner, currOwner);
     }
 
-    function getCarsList() //for owner to get all currently owned cars (returns vin and model of each car)
-    public view returns(simplifiedCar[] memory) {
-        string[] memory vinList =  ownerToCars[msg.sender];
+    function addServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
+    public carExist(vin) onlyCurrOwner(vin) onlyRole("Workshop") {
+        internalAddServiceRecord(vin, newServiceRecord);
+    }
+
+    function getOwnedCarsList()
+    public view userExist(msg.sender) returns (simplifiedCar[] memory) {
+        string[] memory vinList = ownerToCarsMap[msg.sender];
         simplifiedCar[] memory carList = new simplifiedCar[](vinList.length);
-        for (uint i = 0; i< vinList.length; i++){
+        for (uint256 i = 0; i < vinList.length; i++) {
             carList[i] = simplifiedCar({
                 carModel: carMap[vinList[i]].carModel,
                 carVin: vinList[i]
@@ -111,11 +131,11 @@ contract Car {
         return carList;
     }
 
-    function getManufacturedCarsList() //for manufacturer to get all previously manufactured cars (returns vin and model of each car)
-    public view returns(simplifiedCar[] memory) {
-        string[] memory vinList =  manufacturerToCars[msg.sender];
+    function getManufacturedCarsList()
+    public view onlyRole("Manufacturer") returns (simplifiedCar[] memory) {
+        string[] memory vinList = manufacturerToCarsMap[msg.sender];
         simplifiedCar[] memory carList = new simplifiedCar[](vinList.length);
-        for (uint i = 0; i< vinList.length; i++){
+        for (uint256 i = 0; i < vinList.length; i++) {
             carList[i] = simplifiedCar({
                 carModel: carMap[vinList[i]].carModel,
                 carVin: vinList[i]
@@ -124,14 +144,66 @@ contract Car {
         return carList;
     }
 
-    // function getCar(string memory vin) public view returns (car memory){
-    //     return carMap[vin];
-    // }
+    function getCarServiceRecordByVin(string memory vin)
+    public view carExist(vin) returns (serviceRecord[] memory) {
+        serviceRecord[] memory serviceRecordList = new serviceRecord[](carMap[vin].serviceRecordCount);
+        for (uint256 i = 0; i < carMap[vin].serviceRecordCount; i++) {
+            serviceRecordList[i] = serviceRecord({
+                createdBy: carMap[vin].serviceRecordMap[i].createdBy,
+                createdOn: carMap[vin].serviceRecordMap[i].createdOn,
+                comment: carMap[vin].serviceRecordMap[i].comment
+            });
+        }
+        return serviceRecordList;
+    }
 
-    // function workShopAddServiceRecord(string memory vin, string memory createdOn,
-    // string memory carPart, string memory model, string memory batchNo, string memory comment) 
-    // public carExist(vin) onlyRole("Workshop") onlyCurrOwner(vin) {
- 
-    // }
-    
+    function getCurrentOwner(string memory vin)
+    public view carExist(vin) returns (address) {
+        uint256 arrLength = carMap[vin].ownersList.length;
+        return carMap[vin].ownersList[arrLength - 1];
+    }
+
+    function checkCarExists(string memory vin)
+    public view returns (bool) {
+        return carExistMap[vin];
+    }
+
+    function getCarByVin(string memory vin)
+    public view userExist(msg.sender) carExist(vin) returns (carView memory) {
+        return carView({
+            vin: vin,
+            carModel: carMap[vin].carModel,
+            ownersList: carMap[vin].ownersList,
+            serviceRecordList: getCarServiceRecordByVin(vin),
+            currOwner: getCurrentOwner(vin)
+        });
+    }
+
+    function setCarMarket()
+    public onlyOnceFromCarMarket() {
+        carMarketAddress = msg.sender;
+        setCarMarketBool = true;
+    }
+
+    function internalAddServiceRecord(string memory vin, serviceRecord memory newServiceRecord)
+    internal {
+        uint256 numServiceRecord = carMap[vin].serviceRecordCount;
+        carMap[vin].serviceRecordMap[numServiceRecord] = newServiceRecord;
+
+        emit AddServiceRecord(vin, carMap[vin].serviceRecordMap[numServiceRecord]);
+        carMap[vin].serviceRecordCount++;
+    }
+
+    function internalGetCarServiceRecordByVin(string memory vin)
+    internal view returns (serviceRecord[] memory) {
+        serviceRecord[] memory serviceRecordList = new serviceRecord[](carMap[vin].serviceRecordCount);
+        for (uint256 i = 0; i < carMap[vin].serviceRecordCount; i++) {
+            serviceRecordList[i] = serviceRecord({
+                createdBy: carMap[vin].serviceRecordMap[i].createdBy,
+                createdOn: carMap[vin].serviceRecordMap[i].createdOn,
+                comment: carMap[vin].serviceRecordMap[i].comment
+            });
+        }
+        return serviceRecordList;
+    }
 }
