@@ -83,10 +83,6 @@ class Marketplace extends Component {
         carMarket: carMarketInstance });
 
       //manually populate data
-      const user = await this.state.carNetwork.methods.register(
-        accounts[0],
-        "Manufacturer"
-      ).send({ from: accounts[0] });
       const carCreated1 = await this.state.carContract.methods.createCar(
         "VIN12345",
         "CarModel12345",
@@ -142,10 +138,10 @@ class Marketplace extends Component {
       const { accounts, carContract, carMarket } = this.state;
       const carRecord = await carContract.methods.getCarByVin(
         carVin,
-      ).call();
+      ).call({ from: accounts[0] });
       const carPrice = await carMarket.methods.checkPrice(
         carVin,
-      ).call();
+      ).call({ from: accounts[0] });
       console.log(carPrice)
       if (carRecord && carPrice) {
         this.setState({

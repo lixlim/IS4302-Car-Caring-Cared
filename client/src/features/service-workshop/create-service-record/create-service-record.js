@@ -44,7 +44,7 @@ class CreateServiceRecord extends Component {
       const serviceRecord = {
         comment: this.state.comment,
         createdBy: accounts[0],
-        createdOn: moment().format()
+        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
       }
   
       const serviceRecordCreated = await carContract.methods.addServiceRecord(

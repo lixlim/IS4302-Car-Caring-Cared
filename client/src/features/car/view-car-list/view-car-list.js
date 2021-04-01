@@ -56,40 +56,10 @@ class ViewCarList extends Component {
 
         const {accounts, carContract, carNetwork} = this.state;
         
-        try {
-           const user = await this.state.carNetwork.methods.register(
-            accounts[0],
-            "Manufacturer"
-          ).send({ from: accounts[0] });
-          const carCreated1 = await carContract.methods.createCar(
-            "VIN12345",
-            "CarModel12345",
-            {
-              comment: "comment 2",
-              createdBy: accounts[0],
-              createdOn: "2020-02-21"
-            }
-          ).send({ from: accounts[0] });
-          console.log(carCreated1);
-
-          const carCreated2 = await carContract.methods.createCar(
-            "VIN12340",
-            "CarModel111",
-            {
-              comment: "comment 2",
-              createdBy: accounts[0],
-              createdOn: "2020-02-21"
-            }
-          ).send({ from: accounts[0] });
-          console.log(carCreated2);
-          
-        } catch(e) {
-          console.log(e);
-        }
-        
+  
         //Check user role
         //Manufactorer will call getManufacturedCarsList
-        const carList = await carContract.methods.getOwnedCarsList().call();
+        const carList = await carContract.methods.getOwnedCarsList().call({ from: accounts[0] });
         if(carList) {
           console.log("success");
         }
@@ -110,7 +80,7 @@ class ViewCarList extends Component {
         const { accounts, carContract } = this.state;
         const carRecord = await carContract.methods.getCarByVin(
           carVin,
-        ).call();
+        ).call({ from: accounts[0] });
         console.log(carRecord)
         if (carRecord) {
           this.setState({
@@ -141,7 +111,10 @@ class ViewCarList extends Component {
         const { totalCar, cars } = this.state;
 
         return (
+        <div class="main">
+            {cars &&
             <div>
+              <h1>View Car List</h1>
               <label>
                 <div> Total Cars owned: { cars.length } </div>
               </label>
@@ -160,8 +133,7 @@ class ViewCarList extends Component {
                   <tr key={car.carVin}>
                       <td>{car.carVin}</td>
                       <td>{car.carModel}</td>
-                      {/*td><button onClick={() => this.setState({viewMore: true, carRecord: car})} className="btn btn-primary">view more</button></td>*/}
-                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">view more</button></td>
+                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
                       <td><button onClick={() => console.log(car.carVin)} className="btn btn-success">List</button></td>
                       <td><button onClick={() => console.log("Go to authorize page")} className="btn btn-secondary">Authorize</button></td>
                   </tr>
@@ -169,8 +141,10 @@ class ViewCarList extends Component {
                 </tbody>
               </table>
             </div>
-            
-    );  
+            }
+        </div>
+    
+    )
   }
 }
 
