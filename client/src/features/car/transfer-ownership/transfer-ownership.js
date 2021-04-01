@@ -2,7 +2,9 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import './transfer-ownership.css'
+import './transfer-ownership.css';
+import Navbar from "../../main/navbar";
+
 class TransferOwnership extends Component {
 
   constructor() {
@@ -95,6 +97,8 @@ class TransferOwnership extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
+      <>
+      <Navbar/>
       <div class="main">   
         <h1>Transfer Car Ownership</h1>    
         <p>
@@ -126,6 +130,7 @@ class TransferOwnership extends Component {
             }
           </div>    
       </div>
+      </>
     );
   }
 }

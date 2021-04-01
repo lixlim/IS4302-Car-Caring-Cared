@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import './view-car.css';
+import Navbar from "../../main/navbar";
 
 class ViewCar extends Component {
   state = {prevOwnerList: null};

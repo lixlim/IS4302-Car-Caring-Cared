@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import ViewCar from "../view-car/view-car"
+import Navbar from "../../main/navbar";
 
 class ViewOneCar extends Component {
 
@@ -14,6 +15,8 @@ class ViewOneCar extends Component {
     
     render() {
         return (
+            <>
+            <Navbar/>
             <div class="main">
                 {this.state.carRecord && !this.state.carRecord.carPrice &&
                     <>
@@ -40,6 +43,7 @@ class ViewOneCar extends Component {
                     </>
                 }
             </div>
+            </>
     );  
   }
 }

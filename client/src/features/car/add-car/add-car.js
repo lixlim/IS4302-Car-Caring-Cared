@@ -4,6 +4,7 @@ import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
 import "./add-car.css"
 import moment from 'moment';
+import Navbar from "../../main/navbar";
 
 class AddCar extends Component {
   constructor() {
@@ -110,6 +111,8 @@ class AddCar extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
+      <>
+      <Navbar />
       <div class="main">
         <div>
         <h1>Add a car record</h1>
@@ -147,6 +150,7 @@ class AddCar extends Component {
           </div>
         </div>
       </div>
+    </>
     );
   }
 }

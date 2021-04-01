@@ -3,7 +3,9 @@ import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
 import './search-car.css';
-import ViewCar from "../view-car/view-car"
+import ViewCar from "../view-car/view-car";
+import Navbar from "../../main/navbar";
+
 class SearchCar extends Component {
 
   constructor() {
@@ -111,6 +113,8 @@ class SearchCar extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
+      <>
+      <Navbar/>
       <div class="main">   
         <h1>Search Car</h1>    
         <p>
@@ -140,6 +144,7 @@ class SearchCar extends Component {
           </div>              
         }
       </div>
+      </>
     );
   }
 }

@@ -8,6 +8,8 @@ import './marketplace.css';
 import {
   Redirect
 } from "react-router-dom";
+import Navbar from "../../main/navbar";
+
 class Marketplace extends Component {
 
   constructor() {
@@ -167,6 +169,8 @@ class Marketplace extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
+      <>
+      <Navbar/>
       <div class="main">   
         <h1>Car Marketplace</h1>    
         <p>
@@ -201,6 +205,7 @@ class Marketplace extends Component {
           }
    
       </div>
+      </>
     );
   }
 }

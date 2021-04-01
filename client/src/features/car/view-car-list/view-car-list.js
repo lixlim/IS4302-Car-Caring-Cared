@@ -7,6 +7,7 @@ import "./view-car-list.css";
 import {
   Redirect
 } from "react-router-dom";
+import Navbar from "../../main/navbar";
 
 class ViewCarList extends Component {
     
@@ -113,6 +114,8 @@ class ViewCarList extends Component {
         const { totalCar, cars } = this.state;
 
         return (
+        <>
+        <Navbar/>
         <div class="main">
             {cars &&
             <div>
@@ -145,7 +148,7 @@ class ViewCarList extends Component {
             </div>
             }
         </div>
-    
+      </>
     )
   }
 }

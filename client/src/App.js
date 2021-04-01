@@ -11,7 +11,10 @@ import AddCar from './features/car/add-car/add-car';
 import TransferOwnership from './features/car/transfer-ownership/transfer-ownership';
 import AuthoriseWorkshop from './features/car/authorise-workshop/authorise-workshop';
 import CreateServiceRecord from './features/service-workshop/create-service-record/create-service-record';
+import SearchCar from './features/car/search-car/search-car';
+import Marketplace from './features/car/marketplace/marketplace';
 import Register from './features/main/register/register';
+import ListCar from './features/car/list-car/list-car';
 class App extends Component {
 
   //create dealer in carNetwork
@@ -145,12 +148,16 @@ class App extends Component {
           <Route path='/login' component={Login} />
           <ProtectedRoute exact path="/" component={Homepage} />
           <ProtectedRoute exact path="/test" component={Testpage} />
-          <ProtectedRoute exact path="/viewCar/:id" component={ViewOneCar} />
-          <ProtectedRoute exact path="/viewCar" component={ViewCarList} />
+          <ProtectedRoute exact path="/view-car/:id" component={ViewOneCar} />
+          <ProtectedRoute exact path="/view-car" component={ViewCarList} />
           <ProtectedRoute path="/transfer-ownership" component={TransferOwnership}/>
           <ProtectedRoute path="/add-car" component={AddCar}/>
-          <ProtectedRoute path="/authorise-workshop" component={AuthoriseWorkshop}/>
+          <ProtectedRoute path="/authorise-workshop/:id" component={AuthoriseWorkshop}/>
           <ProtectedRoute path="/create-service-record" component={CreateServiceRecord}/>
+          <ProtectedRoute path="/register" component={Register}/>
+          <ProtectedRoute path="/search-car" component={SearchCar} />
+          <ProtectedRoute path="/marketplace" component={Marketplace} />
+          <ProtectedRoute path="/listCar/:id" component={ListCar}/>
       </AuthProvider>
       </BrowserRouter>
     );

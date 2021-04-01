@@ -85,31 +85,31 @@ class Navbar extends Component {
         if (this.state.role === 'Manufacturer') {
             menu = (
                 <>
-                    <a className="nav-item nav-link" href="/">Create car</a>
-                    <a className="nav-item nav-link" href="/viewCar">View list of cars created</a>
-                    <a className="nav-item nav-link" href="/">Search car</a>
-                    <a className="nav-item nav-link" href="/">Marketplace</a>
-                    <a className="nav-item nav-link" href="/">Transfer ownership</a>
+                    <a className="nav-item nav-link" href="/create-car">Create car</a>
+                    <a className="nav-item nav-link" href="/view-car">View list of cars created</a>
+                    <a className="nav-item nav-link" href="/search-car">Search car</a>
+                    <a className="nav-item nav-link" href="/marketplace">Marketplace</a>
+                    <a className="nav-item nav-link" href="/transfer-ownership">Transfer ownership</a>
                 </>
             );
         } else if (this.state.role === 'Dealer') {
             menu = (<>
-                <a className="nav-item nav-link" href="/">Search car</a>
-                <a className="nav-link" href="/viewCar">View list of cars owned</a>
-                <a className="nav-item nav-link" href="/">Marketplace</a>
-                <a className="nav-item nav-link" href="/">Transfer ownership</a>
+                <a className="nav-item nav-link" href="/search-car">Search car</a>
+                <a className="nav-link" href="/view-car">View list of cars owned</a>
+                <a className="nav-item nav-link" href="/marketplace">Marketplace</a>
+                <a className="nav-item nav-link" href="/transfer-ownership">Transfer ownership</a>
             </>);
         } else if (this.state.role === 'Workshop') {
             menu = (<div>
-                <a className="nav-link" href="/">Create service record</a>
-                <a className="nav-link" href="/viewCar/:id">Search car</a>
+                <a className="nav-link" href="/create-service-record">Create service record</a>
+                <a className="nav-link" href="/view-car/:id">Search car</a>
             </div>)
         } else {
             menu = (<>
-                <a className="nav-item nav-link" href="/">Search car</a>
-                <a className="nav-item nav-link" href="/viewCar">View list of cars owned</a>
-                <a className="nav-item nav-link" href="/">Marketplace</a>
-                <a className="nav-item nav-link" href="/">Transfer ownership</a>
+                <a className="nav-item nav-link" href="/search-car">Search car</a>
+                <a className="nav-item nav-link" href="/view-car">View list of cars owned</a>
+                <a className="nav-item nav-link" href="/marketplace">Marketplace</a>
+                <a className="nav-item nav-link" href="/transfer-ownership">Transfer ownership</a>
             </>
             );
         }

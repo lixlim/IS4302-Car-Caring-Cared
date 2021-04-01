@@ -4,6 +4,7 @@ import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import CarMarketContract from "../../../contracts/CarMarket.json";
 import getWeb3 from "../../../getWeb3";
+import Navbar from "../../main/navbar";
 
 class ListCar extends Component {
 
@@ -135,6 +136,8 @@ class ListCar extends Component {
 
     const { marketValue } = this.state;
     return (
+        <>
+        <Navbar/>
         <div class="main">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -183,6 +186,7 @@ class ListCar extends Component {
         </div>
         }
         </div>
+        </>
     );
   }
 }
