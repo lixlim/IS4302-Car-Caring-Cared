@@ -102,7 +102,7 @@ class Navbar extends Component {
         } else if (this.state.role === 'Workshop') {
             menu = (<div>
                 <a className="nav-link" href="/create-service-record">Create service record</a>
-                <a className="nav-link" href="/view-car/:id">Search car</a>
+                <a className="nav-link" href="/search-car">Search car</a>
             </div>)
         } else {
             menu = (<>
