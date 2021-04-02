@@ -151,7 +151,7 @@ class App extends Component {
           <ProtectedRoute exact path="/view-car/:id" component={ViewOneCar} />
           <ProtectedRoute exact path="/view-car" component={ViewCarList} />
           <ProtectedRoute path="/transfer-ownership" component={TransferOwnership}/>
-          <ProtectedRoute path="/add-car" component={AddCar}/>
+          <ProtectedRoute path="/create-car" component={AddCar}/>
           <ProtectedRoute path="/authorise-workshop/:id" component={AuthoriseWorkshop}/>
           <ProtectedRoute path="/create-service-record" component={CreateServiceRecord}/>
           <ProtectedRoute path="/register" component={Register}/>
