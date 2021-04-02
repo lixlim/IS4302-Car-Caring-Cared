@@ -55,7 +55,8 @@ class CreateServiceRecord extends Component {
       console.log(serviceRecordCreated)
       if (serviceRecordCreated) {
         this.setState({
-          formSubmission: true
+          formSubmission: true,
+          error: null
         })
       }
     } catch (er) {

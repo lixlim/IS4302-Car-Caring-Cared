@@ -46,7 +46,8 @@ class Register extends Component {
       console.log(registerUser)
       if (registerUser) {
         this.setState({
-          formSubmission: true
+          formSubmission: true,
+          error: null
         })
       }
       console.log(registerUser)

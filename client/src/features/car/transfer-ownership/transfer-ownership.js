@@ -49,7 +49,8 @@ class TransferOwnership extends Component {
       console.log(transferOwnership)
       if (transferOwnership) {
         this.setState({
-          formSubmission: true
+          formSubmission: true,
+          error: null
         })
       }
     } catch (er) {

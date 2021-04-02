@@ -62,7 +62,8 @@ class AddCar extends Component {
       console.log(carCreated)
       if (carCreated) {
         this.setState({
-          formSubmission: true
+          formSubmission: true,
+          error: null
         })
       }
     } catch (er) {
