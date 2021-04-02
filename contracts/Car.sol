@@ -11,6 +11,8 @@ contract Car {
     bool setCarMarketBool = false;
     mapping(string => car) private carMap; //the string here refers to VIN car number
     mapping(string => bool) private carExistMap;
+    mapping(string => address) private workshopAuthMap;
+    mapping(string => bool) private workshopAuthExistMap;
     mapping(address => string[]) private ownerToCarsMap;
     mapping(address => string[]) private manufacturerToCarsMap;
 
@@ -40,6 +42,8 @@ contract Car {
     event CreateCar(string vin, string carModel, address manufacturer, uint numOwner);
     event TransferCar(string vin, address prevOwner, address currOwner);
     event AddServiceRecord(string vin, serviceRecord sr);
+    event AuthWorkshop(string vin, address workshop, bool auth);
+    event UnauthWorkshop(string vin, bool auth);
     event Debug(string str);
 
     constructor(CarNetwork cn) public {
@@ -113,9 +117,38 @@ contract Car {
         emit TransferCar(vin, prevOwner, currOwner);
     }
 
+    function authWorkshop(string memory vin, address workshop)
+    public userExist(msg.sender) userExist(workshop) carExist(vin) onlyCurrOwner(vin) {
+        require(!workshopAuthExistMap[vin], "Car already authorised to a workshop");
+        workshopAuthMap[vin] = workshop;
+        workshopAuthExistMap[vin] = true;
+
+        emit AuthWorkshop(vin, workshopAuthMap[vin], workshopAuthExistMap[vin]);
+    }
+
+    function unAuthWorkshop(string memory vin)
+    public userExist(msg.sender) carExist(vin) onlyCurrOwner(vin) {
+        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop");
+        workshopAuthExistMap[vin] = false;
+        
+        emit UnauthWorkshop(vin, workshopAuthExistMap[vin]);
+    }
+
+    function getAuthWorkshop(string memory vin)
+    public view userExist(msg.sender) carExist(vin) onlyCurrOwner(vin) returns (address){
+        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop");
+
+        return workshopAuthMap[vin];
+    }
+
     function addServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
-    public carExist(vin) onlyCurrOwner(vin) onlyRole("Workshop") {
+    public carExist(vin) onlyRole("Workshop") {
+        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to serivce");
+        
         internalAddServiceRecord(vin, newServiceRecord);
+        
+        workshopAuthExistMap[vin] = false;
+        emit UnauthWorkshop(vin, workshopAuthExistMap[vin]);
     }
 
     function getOwnedCarsList()
