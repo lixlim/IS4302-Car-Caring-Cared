@@ -2,26 +2,23 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import "./add-car.css"
-import moment from 'moment';
+import './transfer-ownership.css';
 import Navbar from "../../main/navbar";
 
-class AddCar extends Component {
+class TransferOwnership extends Component {
+
   constructor() {
     super();
     this.state = { 
       web3: null, 
       accounts: null, 
       carContract: null, 
-      carNetworkContract: null, 
+      carNetworkContract: null,
       vin: null,
-      carModel: null,
-      comment: null
+      newOwner: null 
     };
-
-    this.handleChangeVIN = this.handleChangeVIN.bind(this);
-    this.handleChangeCarModel = this.handleChangeCarModel.bind(this);
-    this.handleChangeComment = this.handleChangeComment.bind(this);
+    this.handleChangeVIN = this.handleChangeVIN.bind(this)
+    this.handleChangeNewOwner = this.handleChangeNewOwner.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
@@ -29,12 +26,8 @@ class AddCar extends Component {
     this.setState({vin: event.target.value});
   }
 
-  handleChangeCarModel(event) {
-    this.setState({carModel: event.target.value});
-  }
-
-  handleChangeComment(event) {
-    this.setState({comment: event.target.value});
+  handleChangeNewOwner(event) {
+    this.setState({newOwner: event.target.value});
   }
 
   handleSubmit(event) {
@@ -48,26 +41,19 @@ class AddCar extends Component {
         formSubmission: false
       })
       const { accounts, carContract } = this.state;
-      console.log(accounts[0])
-      const serviceRecord = {
-        comment: this.state.comment,
-        createdBy: accounts[0],
-        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
-      }
-      const carCreated = await carContract.methods.createCar(
+      console.log(carContract)
+      const transferOwnership = await carContract.methods.transferCar(
         this.state.vin,
-        this.state.carModel,
-        serviceRecord
+        this.state.newOwner,
       ).send({ from: accounts[0] });
-      console.log(carCreated)
-      if (carCreated) {
+      console.log(transferOwnership)
+      if (transferOwnership) {
         this.setState({
           formSubmission: true
         })
       }
     } catch (er) {
-      this.setState({error: er});
-      console.log(er)
+      this.setState({error: er})
     }
   }
 
@@ -112,14 +98,13 @@ class AddCar extends Component {
     }
     return (
       <>
-      <Navbar />
-      <div class="main">
-        <div>
-        <h1>Add a car record</h1>
+      <Navbar/>
+      <div class="main">   
+        <h1>Transfer Car Ownership</h1>    
         <p>
-          Create a record of a car that will be stored in the blockchain.
-        </p>
-          <div class="form-container">
+          Update car owner record in the blockchain.
+        </p> 
+        <div class="form-container">
             <form onSubmit={this.handleSubmit}>
             <div class="form-sub-container">
               <div>
@@ -128,31 +113,26 @@ class AddCar extends Component {
                   <input class="form-control" required onChange={this.handleChangeVIN}/>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Car model</label>
-                  <input class="form-control" required onChange={this.handleChangeCarModel}/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Comment</label>
-                  <input class="form-control" required onChange={this.handleChangeComment}/>
+                  <label class="form-label">New Owner Address</label>
+                  <input class="form-control" required onChange={this.handleChangeNewOwner}/>
                 </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
-                A car record is successfully created!
-            </div>
+                The ownership of the car is transferred successfully!
+              </div>
             }
             {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a car record.
+              Error in transferring ownership.
             </div>
             }
-          </div>
-        </div>
+          </div>    
       </div>
-    </>
+      </>
     );
   }
 }
 
-export default AddCar;
+export default TransferOwnership;

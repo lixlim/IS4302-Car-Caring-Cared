@@ -2,39 +2,28 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import "./add-car.css"
-import moment from 'moment';
+import './search-car.css';
+import ViewCar from "../view-car/view-car";
 import Navbar from "../../main/navbar";
 
-class AddCar extends Component {
+class SearchCar extends Component {
+
   constructor() {
     super();
     this.state = { 
       web3: null, 
       accounts: null, 
       carContract: null, 
-      carNetworkContract: null, 
+      carNetworkContract: null,
       vin: null,
-      carModel: null,
-      comment: null
+      newOwner: null 
     };
-
-    this.handleChangeVIN = this.handleChangeVIN.bind(this);
-    this.handleChangeCarModel = this.handleChangeCarModel.bind(this);
-    this.handleChangeComment = this.handleChangeComment.bind(this);
+    this.handleChangeVIN = this.handleChangeVIN.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   handleChangeVIN(event) {
     this.setState({vin: event.target.value});
-  }
-
-  handleChangeCarModel(event) {
-    this.setState({carModel: event.target.value});
-  }
-
-  handleChangeComment(event) {
-    this.setState({comment: event.target.value});
   }
 
   handleSubmit(event) {
@@ -48,26 +37,23 @@ class AddCar extends Component {
         formSubmission: false
       })
       const { accounts, carContract } = this.state;
-      console.log(accounts[0])
-      const serviceRecord = {
-        comment: this.state.comment,
-        createdBy: accounts[0],
-        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
-      }
-      const carCreated = await carContract.methods.createCar(
+      const carRecord = await carContract.methods.getCarByVin(
         this.state.vin,
-        this.state.carModel,
-        serviceRecord
-      ).send({ from: accounts[0] });
-      console.log(carCreated)
-      if (carCreated) {
+      ).call({ from: accounts[0] });
+      console.log(carRecord)
+      if (carRecord) {
         this.setState({
-          formSubmission: true
+          formSubmission: true,
+          carRecord: carRecord,
+          error: null
         })
       }
     } catch (er) {
-      this.setState({error: er});
       console.log(er)
+      this.setState({
+        formSubmission: true,
+        error: er
+      })
     }
   }
 
@@ -97,6 +83,22 @@ class AddCar extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+
+      //manually populate data
+      // const user = await this.state.carNetwork.methods.register(
+      //   accounts[0],
+      //   "Manufacturer"
+      // ).send({ from: accounts[0] });
+      // const carCreated1 = await this.state.carContract.methods.createCar(
+      //   "VIN12345",
+      //   "CarModel12345",
+      //   {
+      //     comment: "comment 2",
+      //     createdBy: accounts[0],
+      //     createdOn: "2020-02-21"
+      //   }
+      // ).send({ from: accounts[0] });
+      // console.log(carCreated1)
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -112,47 +114,39 @@ class AddCar extends Component {
     }
     return (
       <>
-      <Navbar />
-      <div class="main">
-        <div>
-        <h1>Add a car record</h1>
+      <Navbar/>
+      <div class="main">   
+        <h1>Search Car</h1>    
         <p>
-          Create a record of a car that will be stored in the blockchain.
-        </p>
-          <div class="form-container">
-            <form onSubmit={this.handleSubmit}>
+          Search for a car record in the blockchain.
+        </p> 
+        <div class="form-container">
+          <form onSubmit={this.handleSubmit}>
             <div class="form-sub-container">
               <div>
                 <div class="mb-3">
                   <label class="form-label">Vehicle Identification Number (VIN)</label>
-                  <input class="form-control" required onChange={this.handleChangeVIN}/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Car model</label>
-                  <input class="form-control" required onChange={this.handleChangeCarModel}/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Comment</label>
-                  <input class="form-control" required onChange={this.handleChangeComment}/>
+                  <div class="form-button-container">
+                    <input class="form-control" required onChange={this.handleChangeVIN}/>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
                 </div>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-            {this.state.formSubmission && <div class="alert alert-success" role="alert">
-                A car record is successfully created!
-            </div>
-            }
-            {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a car record.
-            </div>
-            }
-          </div>
-        </div>
+          </form>
+        </div>    
+        {this.state.formSubmission && !this.state.error &&
+        <ViewCar carRecord={this.state.carRecord}/>
+          }
+        {this.state.error && 
+          <div class="alert alert-danger" role="alert">
+            The car record does not exist!
+          </div>              
+        }
       </div>
-    </>
+      </>
     );
   }
 }
 
-export default AddCar;
+export default SearchCar;

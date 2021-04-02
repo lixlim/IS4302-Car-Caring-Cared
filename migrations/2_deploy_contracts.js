@@ -1,7 +1,6 @@
 const Car = artifacts.require("Car");
 const CarNetwork = artifacts.require("CarNetwork");
 const CarMarket = artifacts.require("CarMarket");
-
 module.exports = function(deployer, network, accounts){
   deployer.then(()=>{
     return deployer.deploy(CarNetwork, accounts[0]);

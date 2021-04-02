@@ -2,11 +2,10 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import './create-service-record.css'
-import moment from 'moment';
+import './authorise-workshop.css'
 import Navbar from "../../main/navbar";
 
-class CreateServiceRecord extends Component {
+class AuthoriseWorkshop extends Component {
 
   constructor() {
     super();
@@ -16,19 +15,14 @@ class CreateServiceRecord extends Component {
       carContract: null, 
       carNetworkContract: null,
       vin: null,
-      comment: null 
+      newOwner: null 
     };
-    this.handleChangeVIN = this.handleChangeVIN.bind(this);
-    this.handleChangeComment = this.handleChangeComment.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChangeNewOwner = this.handleChangeNewOwner.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  handleChangeVIN(event) {
-    this.setState({vin: event.target.value});
-  }
-
-  handleChangeComment(event) {
-    this.setState({comment: event.target.value});
+  handleChangeNewOwner(event) {
+    this.setState({newOwner: event.target.value});
   }
 
   handleSubmit(event) {
@@ -37,33 +31,22 @@ class CreateServiceRecord extends Component {
   }
 
   callContract = async() => {
-    try {
+    this.setState({
+      formSubmission: false
+    })
+    const { accounts, carContract } = this.state;
+    console.log(carContract)
+    const transferOwnership = await carContract.methods.transferCar(
+      this.state.vin,
+      this.state.newOwner,
+    ).send({ from: accounts[0] });
+    console.log(transferOwnership)
+    if (transferOwnership) {
       this.setState({
-        formSubmission: false
+        formSubmission: true
       })
-      const { accounts, carContract } = this.state;
-      const serviceRecord = {
-        comment: this.state.comment,
-        createdBy: accounts[0],
-        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
-      }
-  
-      const serviceRecordCreated = await carContract.methods.addServiceRecord(
-        this.state.vin,
-        serviceRecord
-      ).send({ from: accounts[0] });
-      console.log(serviceRecordCreated)
-      if (serviceRecordCreated) {
-        this.setState({
-          formSubmission: true
-        })
-      }
-    } catch (er) {
-      this.setState({error: er});
-      console.log(er)
     }
   }
-
 
   componentDidMount = async () => {
     try {
@@ -90,7 +73,9 @@ class CreateServiceRecord extends Component {
 
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
-      this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+      let url = window.location.pathname.split('/');
+      this.setState({ vin:url[2], web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
+      console.log(this.state.web3, "")
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -106,39 +91,37 @@ class CreateServiceRecord extends Component {
     }
     return (
       <>
-      <Navbar/>
+      <Navbar />
       <div class="main">   
-        <h1>Create service record</h1>    
+       <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/view-car">Car List</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{this.state.vin}</li>
+        </ol>
+        </nav>
+        <h1>Authorise Service Workshop</h1>    
         <p>
-          Create a service record that includes the details of the servicing done to the car.
+          Authorise Service Workshops to add service records for your car.
         </p> 
         <div class="form-container">
             <form onSubmit={this.handleSubmit}>
             <div class="form-sub-container">
               <div>
                 <div class="mb-3">
-                  <label class="form-label">Vehicle Identification Number (VIN)</label>
-                  <input class="form-control" required onChange={this.handleChangeVIN}/>
+                  <label class="form-label">Vehicle Identification Number (VIN): {this.state.vin}</label>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Servicing details</label>
-                  <p>
-                    Pleaase input information of maintenance or repair work done on the vehicle.
-                  </p>
-                  <textarea  cols="10" rows="5" charswidth="23" class="form-control" required  onChange={this.handleChangeComment}/>
+                  <label class="form-label">Service Workshop Address</label>
+                  <input class="form-control" required onChange={this.handleChangeNewOwner}/>
                 </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
-                The service record is updated successfully!
+                The authorisation is done successfully!
               </div>
               }
-            {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a service record.
-            </div>
-            }
           </div>    
       </div>
     </>
@@ -146,4 +129,4 @@ class CreateServiceRecord extends Component {
   }
 }
 
-export default CreateServiceRecord;
+export default AuthoriseWorkshop;

@@ -2,39 +2,29 @@ import React, { Component } from "react";
 import CarContract from "../../../contracts/Car.json";
 import CarNetworkContract from "../../../contracts/CarNetwork.json";
 import getWeb3 from "../../../getWeb3";
-import "./add-car.css"
-import moment from 'moment';
-import Navbar from "../../main/navbar";
+import './register.css'
+class Register extends Component {
 
-class AddCar extends Component {
   constructor() {
     super();
     this.state = { 
       web3: null, 
       accounts: null, 
-      carContract: null, 
-      carNetworkContract: null, 
-      vin: null,
-      carModel: null,
-      comment: null
+      carNetworkContract: null,
+      role: null,
+      accountToRegister: null
     };
-
-    this.handleChangeVIN = this.handleChangeVIN.bind(this);
-    this.handleChangeCarModel = this.handleChangeCarModel.bind(this);
-    this.handleChangeComment = this.handleChangeComment.bind(this);
+    this.handleChangeAccount = this.handleChangeAccount.bind(this)
+    this.handleChangeRole = this.handleChangeRole.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   }
 
-  handleChangeVIN(event) {
-    this.setState({vin: event.target.value});
+  handleChangeAccount(event) {
+    this.setState({accountToRegister: event.target.value});
   }
 
-  handleChangeCarModel(event) {
-    this.setState({carModel: event.target.value});
-  }
-
-  handleChangeComment(event) {
-    this.setState({comment: event.target.value});
+  handleChangeRole(event) {
+    this.setState({role: event.target.value});
   }
 
   handleSubmit(event) {
@@ -47,27 +37,21 @@ class AddCar extends Component {
       this.setState({
         formSubmission: false
       })
-      const { accounts, carContract } = this.state;
-      console.log(accounts[0])
-      const serviceRecord = {
-        comment: this.state.comment,
-        createdBy: accounts[0],
-        createdOn: moment().format("YYYY-MM-DD HH:mm:ss")
-      }
-      const carCreated = await carContract.methods.createCar(
-        this.state.vin,
-        this.state.carModel,
-        serviceRecord
+      const { accounts, carNetwork } = this.state;
+      console.log(carNetwork)
+      const registerUser = await carNetwork.methods.register(
+        this.state.accountToRegister,
+        this.state.role
       ).send({ from: accounts[0] });
-      console.log(carCreated)
-      if (carCreated) {
+      console.log(registerUser)
+      if (registerUser) {
         this.setState({
           formSubmission: true
         })
       }
+      console.log(registerUser)
     } catch (er) {
-      this.setState({error: er});
-      console.log(er)
+      this.setState({error: er})
     }
   }
 
@@ -111,48 +95,36 @@ class AddCar extends Component {
       return <div>Loading Web3, accounts, and contract...</div>;
     }
     return (
-      <>
-      <Navbar />
-      <div class="main">
-        <div>
-        <h1>Add a car record</h1>
-        <p>
-          Create a record of a car that will be stored in the blockchain.
-        </p>
-          <div class="form-container">
+      <div class="main">   
+        <h1>Register User</h1>    
+        <div class="form-container">
             <form onSubmit={this.handleSubmit}>
             <div class="form-sub-container">
               <div>
                 <div class="mb-3">
-                  <label class="form-label">Vehicle Identification Number (VIN)</label>
-                  <input class="form-control" required onChange={this.handleChangeVIN}/>
+                  <label class="form-label">User Address</label>
+                  <input class="form-control" required onChange={this.handleChangeAccount}/>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Car model</label>
-                  <input class="form-control" required onChange={this.handleChangeCarModel}/>
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Comment</label>
-                  <input class="form-control" required onChange={this.handleChangeComment}/>
+                  <label class="form-label">Role</label>
+                  <input class="form-control" required onChange={this.handleChangeRole}/>
                 </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
-                A car record is successfully created!
-            </div>
+                The user is registered successfully!
+              </div>
             }
             {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a car record.
+              Error in registering user.
             </div>
             }
-          </div>
-        </div>
+          </div>    
       </div>
-    </>
     );
   }
 }
 
-export default AddCar;
+export default Register;
