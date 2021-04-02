@@ -9,6 +9,7 @@ import {
   Redirect
 } from "react-router-dom";
 import Navbar from "../../main/navbar";
+import AccountService from "../../../services/accounts.service";
 
 class Marketplace extends Component {
 
@@ -19,7 +20,8 @@ class Marketplace extends Component {
       accounts: null, 
       carContract: null, 
       carNetworkContract: null,
-      carMarket: null
+      carMarket: null,
+      listedCars: []
     };
   }
 
@@ -83,42 +85,8 @@ class Marketplace extends Component {
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance,
         carMarket: carMarketInstance });
-
-      //manually populate data
-      // const carCreated1 = await this.state.carContract.methods.createCar(
-      //   "VIN12345",
-      //   "CarModel12345",
-      //   {
-      //     comment: "comment 2",
-      //     createdBy: accounts[0],
-      //     createdOn: "2020-02-21"
-      //   }
-      // ).send({ from: accounts[0] });
-      // const carCreated2 = await this.state.carContract.methods.createCar(
-      //   "VIN123456",
-      //   "CarModel123456",
-      //   {
-      //     comment: "comment 23",
-      //     createdBy: accounts[0],
-      //     createdOn: "2020-02-22"
-      //   }
-      // ).send({ from: accounts[0] });
-      // const listCar = await this.state.carMarket.methods.list(
-      //   "VIN123456",
-      //   1234567
-      // ).send({ from: accounts[0] });
-      // const listCar1 = await this.state.carMarket.methods.list(
-      //   "VIN12345",
-      //   12345678
-      // ).send({ from: accounts[0] });
-      // console.log(listCar)
-      // console.log(listCar1)
-      const allListedCars = await this.state.carMarket.methods.getAllListedCars(
-      ).call({ from: accounts[0] });
-      this.setState({
-        listedCars: allListedCars
-      })
-      console.log(allListedCars)
+      
+      this.loadListedCars();
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -128,27 +96,58 @@ class Marketplace extends Component {
     }
   };
 
-  prepareView(carVin) {
-    console.log("Set carVin -> " + carVin + "::" + typeof(carVin));
-    this.setState({vin: carVin});
-    console.log(this.state);
-    this.callContract(carVin);
+  loadListedCars = async() => {
+    const { accounts, carMarket, listedCars } = this.state;
+    const allListedCars = await carMarket.methods.getAllListedCars(
+      ).call({ from: accounts[0] });
+    
+    allListedCars.forEach((car, index) => {
+      console.log(car.carOwner)
+      AccountService.getAccountWithAddress(car.carOwner)
+      .on("value", snapshot => {
+        snapshot.forEach((data) => {
+          let userAccount = data.val();
+          console.log(userAccount)
+          if (userAccount) {
+            const processedCar = {
+              carModel: car.carModel,
+              carOwner: car.carOwner,
+              carPrice: car.carPrice,
+              carVin: car.carVin,
+              email: userAccount.email
+            };
+            const tempListedCars = listedCars;
+            tempListedCars[index] = processedCar;
+            this.setState({
+              listedCars: tempListedCars
+            })
+          }
+        })
+      })
+    })
   }
 
-  callContract = async(carVin) => {
+  prepareView(listedCar) {
+    console.log("Set carVin -> " + listedCar.carVin + "::" + typeof(listedCar.carVin));
+    this.setState({vin: listedCar.carVin});
+    console.log(this.state);
+    this.callContract(listedCar);
+  }
+
+  callContract = async(listedCar) => {
     try {
       const { accounts, carContract, carMarket } = this.state;
       const carRecord = await carContract.methods.getCarByVin(
-        carVin,
+        listedCar.carVin,
       ).call({ from: accounts[0] });
       const carPrice = await carMarket.methods.checkPrice(
-        carVin,
+        listedCar.carVin,
       ).call({ from: accounts[0] });
       console.log(carPrice)
       if (carRecord && carPrice) {
         this.setState({
           viewMore: true,
-          carRecord: { ...carRecord, carPrice}
+          carRecord: { ...carRecord, carPrice, email: listedCar.email}
         })
       }
     } catch (er) {
@@ -181,23 +180,23 @@ class Marketplace extends Component {
               <thead class="table-dark">
                 <tr>
                   <th>No.</th>
-                  <th>Car Model</th>
                   <th>Car Vin</th>
+                  <th>Car Model</th>
                   <th>Car Price</th>
                   <th>Car Owner</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-            {this.state.listedCars && this.state.listedCars.map((listedCar, index) => {
+            {this.state.listedCars && this.state.listedCars[0] && this.state.listedCars[0].email && this.state.listedCars.map((listedCar, index) => {
             return  (
               <tr>
                 <td>{index + 1}</td>
-                <td>{listedCar.carModel}</td>
                 <td>{listedCar.carVin}</td>
+                <td>{listedCar.carModel}</td>
                 <td>${listedCar.carPrice}</td>
-                <td>{listedCar.carOwner}</td>
+                <td>{listedCar.email}</td>
                 <td>
-                <button onClick={() => this.prepareView(listedCar.carVin)} class="btn btn-primary">View more</button>
+                <button onClick={() => this.prepareView(listedCar)} class="btn btn-primary">View more</button>
                 </td>
               </tr>
             )})}

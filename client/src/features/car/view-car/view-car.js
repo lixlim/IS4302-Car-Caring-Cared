@@ -18,6 +18,8 @@ class ViewCar extends Component {
           <div><strong>Car Model: </strong> {this.props.carRecord.carModel}</div> 
           {this.props.carRecord.carPrice && <div><strong>Car Price: </strong>${this.props.carRecord.carPrice}</div>}
           <div><strong>Car Owner Address: </strong> {this.props.carRecord.currOwner}</div> 
+          {this.props.carRecord.email && <div><strong>Car Owner Email: </strong>{this.props.carRecord.email}</div>}
+
         </div>
         <div class="car-details-container">
           <h5>Previous Owner List</h5>
