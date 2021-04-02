@@ -123,7 +123,7 @@ class ViewCarList extends Component {
               <label>
                 <div> Total Cars owned: { cars.length } </div>
               </label>
-              <table className="table">
+              <table className="table table-bordered">
                 <thead className="table-dark">
                   <tr>
                       <th>Car Vin</th>
