@@ -36,12 +36,12 @@ class AuthoriseWorkshop extends Component {
     })
     const { accounts, carContract } = this.state;
     console.log(carContract)
-    const transferOwnership = await carContract.methods.transferCar(
+    const authoriseWorkshop = await carContract.methods.authWorkshop(
       this.state.vin,
       this.state.newOwner,
     ).send({ from: accounts[0] });
-    console.log(transferOwnership)
-    if (transferOwnership) {
+    console.log(authoriseWorkshop)
+    if (authoriseWorkshop) {
       this.setState({
         formSubmission: true
       })
