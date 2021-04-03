@@ -49,7 +49,8 @@ class SearchCar extends Component {
         })
       }
     } catch (er) {
-      console.log(er)
+      var data = JSON.parse(er.message.slice(er.message.indexOf("{"))).data
+      console.log(data[Object.keys(data)[0]].reason);
       this.setState({
         formSubmission: true,
         error: er
@@ -64,7 +65,7 @@ class SearchCar extends Component {
 
       // Use web3 to get the user's accounts.
       const accounts = await web3.eth.getAccounts();
-
+      web3.eth.handleRevert = true;
       // Get the contract instance.
       const networkId = await web3.eth.net.getId();
       const deployedCarContract = CarContract.networks[networkId];
