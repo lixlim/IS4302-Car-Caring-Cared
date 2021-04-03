@@ -273,7 +273,7 @@ contract('Car', function (accounts) {
             carInstance.addServiceRecord(vin1, serviceRecord1, {
                 from: workshopAddress1
             }),
-            "This workshop is not auth to serivce"
+            "This workshop is not auth to service"
         );
     });
 

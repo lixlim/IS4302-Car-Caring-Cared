@@ -143,7 +143,7 @@ contract Car {
 
     function addServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
     public carExist(vin) onlyRole("Workshop") {
-        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to serivce");
+        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to service");
         
         internalAddServiceRecord(vin, newServiceRecord);
         
