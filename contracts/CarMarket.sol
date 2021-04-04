@@ -26,17 +26,17 @@ contract CarMarket {
     event Debug(string str);
     
     modifier carExist(string memory vin) {
-        require(car.checkCarExists(vin), "Vin number does not exist");
+        require(car.checkCarExists(vin), "VIN number does not exist.");
         _;
     }
 
     modifier onlyCurrOwner(string memory vin) {
-        require(msg.sender == car.getCurrentOwner(vin), "Require car's current owner");
+        require(msg.sender == car.getCurrentOwner(vin), "This action can only be performed by the car's current owner.");
         _;
     }
 
     function list(string memory vin, uint32 price) public onlyCurrOwner(vin) carExist(vin){
-        require(price >0, "Price must be > 0");
+        require(price >0, "Listing price must be > 0.");
         carListings.push(vin);
         carPrices[vin] = price; 
         emit listCar(vin);

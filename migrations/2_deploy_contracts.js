@@ -10,17 +10,17 @@ module.exports = function (deployer, network, accounts) {
   const carModel2 = "BMW 318i";
   const newCarServiceRecord1 = {
     createdBy: accounts[2],
-    createdOn: "01/01/21",
+    createdOn: "2021-03-01 11:26:24",
     comment: "create car, and whatever else comment is to be added by the manufacturer"
   };
   const serviceRecord1 = {
     createdBy: accounts[3],
-    createdOn: "02/02/21",
+    createdOn: "2021-03-20 15:39:57",
     comment: "This comment is created workshopAddress1. serviceRecord1. Any text goes here"
   };
   const serviceRecord2 = {
     createdBy: accounts[3],
-    createdOn: "03/03/21",
+    createdOn: "2021-04-01 12:08:44",
     comment: "This comment is created workshopAddress1. serviceRecord2. Any text goes here"
   };
 

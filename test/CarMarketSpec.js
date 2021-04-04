@@ -21,7 +21,7 @@ contract('CarMarket', function (accounts) {
     const price2 = 60000;
     const newCarServiceRecord1 = {
         createdBy: manufacturerAddress,
-        createdOn: "01/01/21",
+        createdOn: "2021-03-01 11:26:24",
         comment: "create car, and whatever else comment is to be added by the manufacturer"
     };
     // #endregion
@@ -41,7 +41,7 @@ contract('CarMarket', function (accounts) {
             carMarketInstance.list(vin1, 0, {
                 from: ownerAddress
             }),
-            "Price must be > 0"
+            "Listing price must be > 0."
         );
     });
 
@@ -50,7 +50,7 @@ contract('CarMarket', function (accounts) {
             carMarketInstance.list(vin1, 0, {
                 from: manufacturerAddress
             }),
-            "Require car's current owner"
+            "This action can only be performed by the car's current owner."
         );
     });
 
@@ -59,7 +59,7 @@ contract('CarMarket', function (accounts) {
             carMarketInstance.list(vin2, price1, {
                 from: manufacturerAddress
             }),
-            "Vin number does not exist"
+            "VIN number does not exist."
         );
     });
 
@@ -99,7 +99,7 @@ contract('CarMarket', function (accounts) {
             carMarketInstance.unlist(vin1, {
                 from: manufacturerAddress
             }),
-            "Require car's current owner"
+            "This action can only be performed by the car's current owner."
         );
     });
 
