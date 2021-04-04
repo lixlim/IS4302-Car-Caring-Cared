@@ -38,7 +38,7 @@ class ViewCar extends Component {
         })
       })
     })
-    
+
     //get all servicing workshop's business name and UEN
     const serviceRecordList = this.props.carRecord.serviceRecordList;
     serviceRecordList.forEach((serviceRecord, index) => {
@@ -90,9 +90,9 @@ class ViewCar extends Component {
               <thead class="table-dark">
                 <tr>
                   <th>No.</th>
-                  <th>Owner name</th>
+                  <th>Owner Name</th>
                   <th>Owner UEN</th>
-                  <th>Owner address</th>
+                  <th>Owner Address</th>
                 </tr>
               </thead>
             {this.state.dataProcessed && this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 && this.state.prevOwnerList.map((owner, index) => {
@@ -118,7 +118,7 @@ class ViewCar extends Component {
                   <th>No.</th>
                   <th>Creator Name</th>
                   <th style={{width:'150px'}}>Creator UEN</th>
-                  <th>Creator address</th>
+                  <th>Creator Address</th>
                   <th>Created Date</th>
                   <th>Servicing Details</th>
                 </tr>
