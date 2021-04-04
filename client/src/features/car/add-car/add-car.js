@@ -67,8 +67,13 @@ class AddCar extends Component {
         })
       }
     } catch (er) {
-      this.setState({error: er});
-      console.log(er)
+      let data = JSON.parse(er.message.slice(0,-1).slice(er.message.indexOf("{"))).value.data.data
+      let error = data[Object.keys(data)[0]].reason;
+      console.log(data)
+      this.setState({
+        formSubmission: false,
+        error: error
+      })
     }
   }
 
@@ -145,7 +150,7 @@ class AddCar extends Component {
             </div>
             }
             {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a car record.
+              {this.state.error}
             </div>
             }
           </div>

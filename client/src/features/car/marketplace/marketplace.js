@@ -46,7 +46,7 @@ class Marketplace extends Component {
     } catch (er) {
       console.log(er)
       this.setState({
-        formSubmission: true,
+        formSubmission: false,
         error: er
       })
     }
@@ -97,34 +97,45 @@ class Marketplace extends Component {
   };
 
   loadListedCars = async() => {
-    const { accounts, carMarket, listedCars } = this.state;
-    const allListedCars = await carMarket.methods.getAllListedCars(
-      ).call({ from: accounts[0] });
-    
-    allListedCars.forEach((car, index) => {
-      console.log(car.carOwner)
-      AccountService.getAccountWithAddress(car.carOwner)
-      .on("value", snapshot => {
-        snapshot.forEach((data) => {
-          let userAccount = data.val();
-          console.log(userAccount)
-          if (userAccount) {
-            const processedCar = {
-              carModel: car.carModel,
-              carOwner: car.carOwner,
-              carPrice: car.carPrice,
-              carVin: car.carVin,
-              email: userAccount.email
-            };
-            const tempListedCars = listedCars;
-            tempListedCars[index] = processedCar;
-            this.setState({
-              listedCars: tempListedCars
-            })
-          }
+    try {
+      const { accounts, carMarket, listedCars } = this.state;
+      const allListedCars = await carMarket.methods.getAllListedCars(
+        ).call({ from: accounts[0] });
+      console.log(allListedCars)
+      allListedCars.forEach((car, index) => {
+        console.log(car.carOwner)
+        AccountService.getAccountWithAddress(car.carOwner)
+        .on("value", snapshot => {
+          snapshot.forEach((data) => {
+            let userAccount = data.val();
+            console.log(userAccount)
+            if (userAccount) {
+              const processedCar = {
+                carModel: car.carModel,
+                carOwner: car.carOwner,
+                carPrice: car.carPrice,
+                carVin: car.carVin,
+                email: userAccount.email
+              };
+              console.log(processedCar)
+              const tempListedCars = listedCars;
+              tempListedCars[index] = processedCar;
+              this.setState({
+                listedCars: tempListedCars
+              })
+              console.log(allListedCars.length)
+              console.log(this.state.listedCars.length)
+
+              if (index + 1 === allListedCars.length) {
+                this.setState({ dataProcessed: true})
+              }
+            }
+          })
         })
       })
-    })
+    } catch (er) {
+      console.log(er)
+    }
   }
 
   prepareView(listedCar) {
@@ -187,9 +198,9 @@ class Marketplace extends Component {
                   <th>Actions</th>
                 </tr>
               </thead>
-            {this.state.listedCars && this.state.listedCars[0] && this.state.listedCars[0].email && this.state.listedCars.map((listedCar, index) => {
+            {this.state.dataProcessed && this.state.listedCars.map((listedCar, index) => {
             return  (
-              <tr>
+              <tr key={listedCar.carVin}>
                 <td>{index + 1}</td>
                 <td>{listedCar.carVin}</td>
                 <td>{listedCar.carModel}</td>

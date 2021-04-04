@@ -49,11 +49,11 @@ class SearchCar extends Component {
         })
       }
     } catch (er) {
-      var data = JSON.parse(er.message.slice(er.message.indexOf("{"))).data
-      console.log(data[Object.keys(data)[0]].reason);
+      let data = JSON.parse(er.message.slice(er.message.indexOf("{"))).data
+      let error = data[Object.keys(data)[0]].reason;
       this.setState({
-        formSubmission: true,
-        error: er
+        formSubmission: false,
+        error: error
       })
     }
   }
@@ -84,22 +84,6 @@ class SearchCar extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
-
-      //manually populate data
-      // const user = await this.state.carNetwork.methods.register(
-      //   accounts[0],
-      //   "Manufacturer"
-      // ).send({ from: accounts[0] });
-      // const carCreated1 = await this.state.carContract.methods.createCar(
-      //   "VIN12345",
-      //   "CarModel12345",
-      //   {
-      //     comment: "comment 2",
-      //     createdBy: accounts[0],
-      //     createdOn: "2020-02-21"
-      //   }
-      // ).send({ from: accounts[0] });
-      // console.log(carCreated1)
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -135,15 +119,15 @@ class SearchCar extends Component {
               </div>
             </div>
           </form>
+          {this.state.error && 
+          <div class="alert alert-danger" role="alert">
+            {this.state.error}
+          </div>              
+        }
         </div>    
         {this.state.formSubmission && !this.state.error &&
         <ViewCar carRecord={this.state.carRecord}/>
           }
-        {this.state.error && 
-          <div class="alert alert-danger" role="alert">
-            The car record does not exist!
-          </div>              
-        }
       </div>
       </>
     );

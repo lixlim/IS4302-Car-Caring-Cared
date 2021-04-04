@@ -31,19 +31,38 @@ class AuthoriseWorkshop extends Component {
   }
 
   callContract = async() => {
-    this.setState({
-      formSubmission: false
-    })
-    const { accounts, carContract } = this.state;
-    console.log(carContract)
-    const authoriseWorkshop = await carContract.methods.authWorkshop(
-      this.state.vin,
-      this.state.newOwner,
-    ).send({ from: accounts[0] });
-    console.log(authoriseWorkshop)
-    if (authoriseWorkshop) {
+    try {
       this.setState({
-        formSubmission: true
+        formSubmission: false
+      })
+      const { accounts, carContract, web3 } = this.state;
+      console.log(carContract)
+      const isAddressFormat = web3.utils.isAddress(this.state.newOwner);
+      if (isAddressFormat) {
+        const authoriseWorkshop = await carContract.methods.authWorkshop(
+          this.state.vin,
+          this.state.newOwner,
+        ).send({ from: accounts[0] });
+        console.log(authoriseWorkshop)
+        if (authoriseWorkshop) {
+          this.setState({
+            formSubmission: true,
+            error: null
+          })
+        }
+      } else {
+        this.setState({
+          formSubmission: false,
+          error: "Please input a valid address."
+        })  
+      }
+    } catch (er) {
+      let data = JSON.parse(er.message.slice(0,-1).slice(er.message.indexOf("{"))).value.data.data
+      let error = data[Object.keys(data)[0]].reason;
+      console.log(data)
+      this.setState({
+        formSubmission: false,
+        error: error
       })
     }
   }
@@ -101,7 +120,7 @@ class AuthoriseWorkshop extends Component {
         </nav>
         <h1>Authorise Service Workshop</h1>    
         <p>
-          Authorise Service Workshops to add service records for your car.
+          Authorise Service Workshop to add service records for your car.
         </p> 
         <div class="form-container">
             <form onSubmit={this.handleSubmit}>
@@ -118,6 +137,10 @@ class AuthoriseWorkshop extends Component {
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
             </form>
+            {this.state.error && <div class="alert alert-danger" role="alert">
+              {this.state.error}
+            </div>              
+            }
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
                 The authorisation is done successfully!
               </div>

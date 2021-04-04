@@ -154,7 +154,7 @@ class ListCar extends Component {
                         <div>
                             <div class="mb-3">
                                 <label class="form-label">Value for listing</label>
-                                <input class="form-control" required onChange={this.handleChangeListingValue}/>
+                                <input class="form-control" type="number" required onChange={this.handleChangeListingValue}/>
                             </div>
                         </div>
                         </div>
