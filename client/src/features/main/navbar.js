@@ -86,7 +86,7 @@ class Navbar extends Component {
             menu = (
                 <>
                     <a className="nav-item nav-link" href="/create-car">Create car</a>
-                    <a className="nav-item nav-link" href="/view-car">View list of cars created</a>
+                    <a className="nav-item nav-link" href="/view-car">View list of cars manufactured</a>
                     <a className="nav-item nav-link" href="/search-car">Search car</a>
                     <a className="nav-item nav-link" href="/marketplace">Marketplace</a>
                     <a className="nav-item nav-link" href="/transfer-ownership">Transfer ownership</a>
