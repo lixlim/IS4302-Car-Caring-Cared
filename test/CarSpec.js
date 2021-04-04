@@ -243,6 +243,92 @@ contract('Car', function (accounts) {
         );
     });
 
+    it("Auth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+
+        var result1 = await carInstance.authWorkshop(vin1, workshopAddress1, {
+            from: manufacturerAddress
+        });
+        truffleAssert.eventEmitted(result1, 'AuthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.workshop == workshopAddress1 &&
+                ev.auth == true);
+        });
+    });
+
+    it("Auth workshop should fail when already auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+
+        await truffleAssert.reverts(
+            carInstance.authWorkshop(vin1, workshopAddress1, {
+                from: manufacturerAddress
+            }),
+            "Car already authorised to a workshop"
+        );
+    });
+
+    it("Unauth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+      
+        var result1 = await carInstance.unAuthWorkshop(vin1, {
+            from: manufacturerAddress
+        });
+        truffleAssert.eventEmitted(result1, 'UnauthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.auth == false);
+        });
+        truffleAssert.eventEmitted(result1, 'UnauthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.auth == false);
+        });
+    });
+
+    it("Unauth workshop should fail when no workshop auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+
+        await truffleAssert.reverts(
+            carInstance.unAuthWorkshop(vin1, {
+                from: manufacturerAddress
+            }),
+            "Car is not authorised to any workshop"
+        );
+    });
+
+    it("Get auth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+      
+        var result1 = await carInstance.getAuthWorkshop(vin1, {
+            from: manufacturerAddress
+        });
+        assert.strictEqual(result1, workshopAddress1, "auth workshop address did not match");
+    });
+
+    it("Get auth workshop should fail no workshop auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+    
+        await truffleAssert.reverts(
+            carInstance.getAuthWorkshop(vin1, {
+                from: manufacturerAddress
+            }),
+            "Car is not authorised to any workshop"
+        );
+    });
+
     it("Workshop add service record should work", async () => {
         await registerManufacturer();
         await registerWorkshop();
@@ -262,6 +348,21 @@ contract('Car', function (accounts) {
             return (ev.vin == vin1 &&
                 ev.auth == false);
         });
+    });
+
+    it("Workshop add 2nd service record should fail", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+
+        await truffleAssert.reverts(
+            carInstance.addServiceRecord(vin1, serviceRecord2, {
+                from: workshopAddress1
+            }),
+            "This workshop is not authorised to add a service record to this car."
+        );
     });
 
     it("Add service records should fail when not auth-ed", async () => {
@@ -423,6 +524,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
 
         var result = await carInstance.getCarServiceRecordByVin(vin1,{
@@ -441,6 +543,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         await registerOwner1();
         await transferCar(vin1, manufacturerAddress, ownerAddress1);
@@ -463,6 +566,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         var carMarketInstance = await CarMarket.new(carInstance.address);
 
