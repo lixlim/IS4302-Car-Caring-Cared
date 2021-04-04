@@ -144,7 +144,7 @@ contract('Car', function (accounts) {
             carInstance.transferCar(vin1, ownerAddress1, {
                 from: ownerAddress2
             }),
-            "Require car's current owner"
+            "This action require car's current owner"
         );
     });
 
@@ -157,7 +157,7 @@ contract('Car', function (accounts) {
             carInstance.transferCar(vin1, ownerAddress2, {
                 from: ownerAddress1
             }),
-            "Require car's current owner"
+            "This action require car's current owner"
         );
     });
 
@@ -262,6 +262,21 @@ contract('Car', function (accounts) {
             return (ev.vin == vin1 &&
                 ev.auth == false);
         });
+    });
+
+    it("Workshop add 2nd service record should fail", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+
+        await truffleAssert.reverts(
+            carInstance.addServiceRecord(vin1, serviceRecord2, {
+                from: workshopAddress1
+            }),
+            "This workshop is not auth to service"
+        );
     });
 
     it("Add service records should fail when not auth-ed", async () => {
@@ -423,6 +438,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
 
         var result = await carInstance.getCarServiceRecordByVin(vin1,{
@@ -441,6 +457,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         await registerOwner1();
         await transferCar(vin1, manufacturerAddress, ownerAddress1);
@@ -463,6 +480,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         var carMarketInstance = await CarMarket.new(carInstance.address);
 

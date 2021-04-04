@@ -72,7 +72,7 @@ contract Car {
 
     modifier onlyCurrOwner(string memory vin) {
         uint256 arrLength = carMap[vin].ownersList.length;
-        require(msg.sender == carMap[vin].ownersList[arrLength - 1], "Require car's current owner");
+        require(msg.sender == carMap[vin].ownersList[arrLength - 1], "This action require car's current owner");
         _;
     }
 
@@ -143,7 +143,8 @@ contract Car {
 
     function addServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
     public carExist(vin) onlyRole("Workshop") {
-        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to serivce");
+        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to service");
+        require(workshopAuthExistMap[vin], "This workshop is not auth to service");
         
         internalAddServiceRecord(vin, newServiceRecord);
         
