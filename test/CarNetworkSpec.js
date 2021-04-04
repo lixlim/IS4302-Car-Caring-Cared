@@ -73,7 +73,7 @@ contract('CarNetwork', function (accounts) {
             carNetworkInstance.register(workshopAddress, "Workshop", {
                 from: carNetworkHostAddress
             }),
-            "User already registered in system"
+            "User already registered in system."
         );
     });
 
@@ -106,7 +106,7 @@ contract('CarNetwork', function (accounts) {
     it("Return Role with address should fail", async () => {
         await truffleAssert.reverts(
             carNetworkInstance.returnRoleWithAccount(accounts[5]),
-            "User not registered in system"
+            "User not registered in system."
         );
     });
 

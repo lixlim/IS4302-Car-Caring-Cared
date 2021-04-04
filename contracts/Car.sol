@@ -51,12 +51,12 @@ contract Car {
     }
 
     modifier onlyRole(string memory role) {
-        require(carNetwork.checkRole(msg.sender, role), "You do not have the access right");
+        require(carNetwork.checkRole(msg.sender, role), "This action can only be performed by specified permissioned roles.");
         _;
     }
 
     modifier carExist(string memory vin) {
-        require(carExistMap[vin], "Vin number does not exist");
+        require(carExistMap[vin], "VIN number does not exist.");
         _;
     }
 
@@ -65,14 +65,14 @@ contract Car {
                 carNetwork.checkRole(user, "Owner") ||
                 carNetwork.checkRole(user, "Manufacturer") ||
                 carNetwork.checkRole(user, "Dealer") ||
-                carNetwork.checkRole(user, "Workshop"), "Transfering to non-existing address"
+                carNetwork.checkRole(user, "Workshop"), "User with this address does not exist."
         );
         _;
     }
 
     modifier onlyCurrOwner(string memory vin) {
         uint256 arrLength = carMap[vin].ownersList.length;
-        require(msg.sender == carMap[vin].ownersList[arrLength - 1], "Require car's current owner");
+        require(msg.sender == carMap[vin].ownersList[arrLength - 1], "This action can only be performed by the car's current owner.");
         _;
     }
 
@@ -119,7 +119,7 @@ contract Car {
 
     function authWorkshop(string memory vin, address workshop)
     public userExist(msg.sender) userExist(workshop) carExist(vin) onlyCurrOwner(vin) {
-        require(!workshopAuthExistMap[vin], "Car already authorised to a workshop");
+        require(!workshopAuthExistMap[vin], "Car already authorised to a workshop.");
         workshopAuthMap[vin] = workshop;
         workshopAuthExistMap[vin] = true;
 
@@ -128,7 +128,7 @@ contract Car {
 
     function unAuthWorkshop(string memory vin)
     public userExist(msg.sender) carExist(vin) onlyCurrOwner(vin) {
-        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop");
+        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop.");
         workshopAuthExistMap[vin] = false;
         
         emit UnauthWorkshop(vin, workshopAuthExistMap[vin]);
@@ -136,14 +136,14 @@ contract Car {
 
     function getAuthWorkshop(string memory vin)
     public view userExist(msg.sender) carExist(vin) onlyCurrOwner(vin) returns (address){
-        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop");
+        require(workshopAuthExistMap[vin], "Car is not authorised to any workshop.");
 
         return workshopAuthMap[vin];
     }
 
     function addServiceRecord(string memory vin, serviceRecord memory newServiceRecord) 
     public carExist(vin) onlyRole("Workshop") {
-        require(workshopAuthMap[vin] == msg.sender, "This workshop is not auth to service");
+        require(workshopAuthMap[vin] == msg.sender, "This workshop is not authorised to add a service record to this car.");
         
         internalAddServiceRecord(vin, newServiceRecord);
         
