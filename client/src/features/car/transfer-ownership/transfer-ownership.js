@@ -40,21 +40,36 @@ class TransferOwnership extends Component {
       this.setState({
         formSubmission: false
       })
-      const { accounts, carContract } = this.state;
+      const { accounts, carContract, web3 } = this.state;
       console.log(carContract)
-      const transferOwnership = await carContract.methods.transferCar(
-        this.state.vin,
-        this.state.newOwner,
-      ).send({ from: accounts[0] });
-      console.log(transferOwnership)
-      if (transferOwnership) {
+      const isAddressFormat = web3.utils.isAddress(this.state.newOwner);
+      if (isAddressFormat) {
+        const transferOwnership = await carContract.methods.transferCar(
+          this.state.vin,
+          this.state.newOwner,
+        ).send({ from: accounts[0] });
+        console.log(transferOwnership)
+        if (transferOwnership) {
+          this.setState({
+            formSubmission: true,
+            error: null
+          })
+        }
+      } else {
         this.setState({
-          formSubmission: true,
-          error: null
-        })
+          formSubmission: false,
+          error: "Please input a valid address."
+        })  
       }
+     
     } catch (er) {
-      this.setState({error: er})
+      let data = JSON.parse(er.message.slice(0,-1).slice(er.message.indexOf("{"))).value.data.data
+      let error = data[Object.keys(data)[0]].reason;
+      console.log(data)
+      this.setState({
+        formSubmission: false,
+        error: error
+      })    
     }
   }
 
@@ -120,15 +135,15 @@ class TransferOwnership extends Component {
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            {this.state.error && <div class="alert alert-danger" role="alert">
+              {this.state.error}
+            </div>
+            }
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
                 The ownership of the car is transferred successfully!
               </div>
             }
-            {this.state.error && <div class="alert alert-danger" role="alert">
-              Error in transferring ownership.
-            </div>
-            }
+            </form>
           </div>    
       </div>
       </>

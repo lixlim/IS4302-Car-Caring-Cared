@@ -1,13 +1,75 @@
 import React, { Component } from "react";
 import './view-car.css';
-import Navbar from "../../main/navbar";
+import AccountService from "../../../services/accounts.service";
 
 class ViewCar extends Component {
-  state = {prevOwnerList: null};
+  constructor() {
+    super();
+    this.state = {prevOwnerList: [], serviceRecordList: []};
+  }
+  componentDidMount(){
+    //get all prev owners' business name and UEN
+    const prevOwnerList = this.props.carRecord.ownersList.filter(owner => owner !== this.props.carRecord.currOwner);
+    prevOwnerList.forEach((owner, index) => {
+      AccountService.getAccountWithAddress(owner)
+      .on("value", snapshot => {
+        snapshot.forEach((data) => {
+          let userAccount = data.val();
+          console.log(userAccount)
+          if (userAccount) {
+            const prevOwnerInformation = {
+              ownerAddress: owner,
+              ownerName: userAccount.name ? userAccount.name: '-',
+              ownerUEN: userAccount.uen ? userAccount.uen: '-',
+            };
+            console.log(prevOwnerInformation)
+            const tempPrevOwnerList = this.state.prevOwnerList;
+            tempPrevOwnerList[index] = prevOwnerInformation;
+            this.setState({
+              prevOwnerList: tempPrevOwnerList
+            })
+            console.log(prevOwnerList.length)
+            console.log(this.state.prevOwnerList.length)
 
-  componentDidMount() {
-    this.setState({
-      prevOwnerList: this.props.carRecord.ownersList.filter(owner => owner !== this.props.carRecord.currOwner)
+            if (index + 1 === prevOwnerList.length) {
+              this.setState({ dataProcessed: true})
+            }
+          }
+        })
+      })
+    })
+
+    //get all servicing workshop's business name and UEN
+    const serviceRecordList = this.props.carRecord.serviceRecordList;
+    serviceRecordList.forEach((serviceRecord, index) => {
+      AccountService.getAccountWithAddress(serviceRecord.createdBy)
+      .on("value", snapshot => {
+        snapshot.forEach((data) => {
+          let userAccount = data.val();
+          console.log(userAccount)
+          if (userAccount) {
+            const newServiceRecord = {
+              creatorAddress: serviceRecord.createdBy,
+              creatorName: userAccount.name ? userAccount.name: '-',
+              creatorUEN: userAccount.uen ? userAccount.uen: '-',
+              createdOn: serviceRecord.createdOn,
+              servicingDetails: serviceRecord.comment
+            };
+            console.log(newServiceRecord)
+            const tempServiceRecordList = this.state.serviceRecordList;
+            tempServiceRecordList[index] = newServiceRecord;
+            this.setState({
+              serviceRecordList: tempServiceRecordList
+            })
+            console.log(tempServiceRecordList.length)
+            console.log(this.state.serviceRecordList.length)
+
+            if (index + 1 === serviceRecordList.length) {
+              this.setState({ dataProcessedRecord: true})
+            }
+          }
+        })
+      })
     })
   }
   render() {
@@ -23,45 +85,53 @@ class ViewCar extends Component {
         </div>
         <div class="car-details-container">
           <h5>Previous Owner List</h5>
-        {this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 &&
+        {this.state.dataProcessed && this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 &&
             <table class="table table-bordered">
               <thead class="table-dark">
                 <tr>
                   <th>No.</th>
-                  <th>Owner address</th>
+                  <th>Owner Name</th>
+                  <th>Owner UEN</th>
+                  <th>Owner Address</th>
                 </tr>
               </thead>
-            {this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 && this.state.prevOwnerList.map((owner, index) => {
+            {this.state.dataProcessed && this.state.prevOwnerList && this.state.prevOwnerList.length >= 1 && this.state.prevOwnerList.map((owner, index) => {
             return  (
-              <tr>
-                <td>{index + 1}</td>
-                <td>{owner}</td>
+              <tr key={index}>
+                <td>{index + 1}.</td>
+                <td>{owner.ownerName}</td>
+                <td>{owner.ownerUEN}</td>
+                <td>{owner.ownerAddress}</td>
               </tr>
             )})}
           </table>
           }
-          {this.state.prevOwnerList && this.state.prevOwnerList.length == 0 && 
+          {this.state.dataProcessed && this.state.prevOwnerList && this.state.prevOwnerList.length == 0 && 
           <div>There are no previous owners.</div>}
         </div>
         <div class="car-details-container">
           <h5>Service records</h5>
-          {this.props.carRecord.serviceRecordList &&
+          {this.state.dataProcessedRecord && this.props.carRecord.serviceRecordList &&
             <table class="table table-bordered">
               <thead class="table-dark">
                 <tr>
                   <th>No.</th>
-                  <th>Created By</th>
-                  <th>Created On</th>
+                  <th>Creator Name</th>
+                  <th style={{width:'150px'}}>Creator UEN</th>
+                  <th>Creator Address</th>
+                  <th>Created Date</th>
                   <th>Servicing Details</th>
                 </tr>
               </thead>
-            {this.props.carRecord.serviceRecordList && this.props.carRecord.serviceRecordList.map((serviceRecord, index) => {
+            {this.state.dataProcessedRecord && this.state.serviceRecordList.map((serviceRecord, index) => {
             return  (
               <tr>
-                <td>{index + 1}</td>
-                <td>{serviceRecord.createdBy}</td>
+                <td>{index + 1}.</td>
+                <td>{serviceRecord.creatorName}</td>
+                <td>{serviceRecord.creatorUEN}</td>                
+                <td>{serviceRecord.creatorAddress}</td>
                 <td>{serviceRecord.createdOn}</td>
-                <td>{serviceRecord.comment}</td>
+                <td>{serviceRecord.servicingDetails}</td>
               </tr>
             )})}
           </table>
