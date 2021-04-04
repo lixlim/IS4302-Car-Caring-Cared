@@ -141,7 +141,7 @@ class CreateServiceRecord extends Component {
             </div>
             }
             {this.state.formSubmission && <div class="alert alert-success" role="alert">
-              The service record is updated successfully!
+              The service record is created successfully!
             </div>
             }
             </form>
