@@ -106,7 +106,7 @@ class ViewCar extends Component {
             )})}
           </table>
           }
-          {this.state.dataProcessed && this.state.prevOwnerList && this.state.prevOwnerList.length == 0 && 
+          {this.state.prevOwnerList && this.state.prevOwnerList.length == 0 && 
           <div>There are no previous owners.</div>}
         </div>
         <div class="car-details-container">
