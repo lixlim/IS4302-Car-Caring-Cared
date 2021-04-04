@@ -17,6 +17,7 @@ class ViewCarList extends Component {
     constructor(props) {
         super(props);
         console.log(this.state);
+        this.getRoles = this.getRoles.bind(this);
         //this.forceUpdate();
     }
 
@@ -46,7 +47,7 @@ class ViewCarList extends Component {
           // Set web3, accounts, and contract to the state, and then proceed with an
           // example of interacting with the contract's methods.
           this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance });
-          this.preload();
+          this.getRoles().then((result) => this.preload(result));
         } catch (error) {
           // Catch any errors for any of the above operations.
           alert(
@@ -56,10 +57,18 @@ class ViewCarList extends Component {
         }
     }
 
-    preload = async () => {
-      const {accounts, carContract} = this.state;
+    preload = async (role) => {
+      const {accounts, carContract } = this.state;
+      let carList = null;
+      console.log("HERE::" + role);
       try {
-        const carList = await carContract.methods.getOwnedCarsList().call({ from: accounts[0] });
+        if(role === 'Owner') {
+          console.log('calling owner list');
+          carList = await carContract.methods.getOwnedCarsList().call({ from: accounts[0] });
+        } else if(role === 'Manufacturer') {
+          console.log('calling manufacturer list');
+          carList = await carContract.methods.getManufacturedCarsList().call({ from: accounts[0] });
+        }
         if(carList) {
           console.log("success");
         }
@@ -95,6 +104,21 @@ class ViewCarList extends Component {
         console.log(er)
       }
     }
+
+    getRoles = async () => {
+
+      const { accounts, carNetwork } = this.state;
+
+      try {
+          const role = await carNetwork.methods.returnRoleWithAccount(
+              accounts[0],
+          ).call({ from: accounts[0] });
+          this.setState({ role: role });
+          return role;
+      } catch (er) {
+          console.log(er)
+      }
+  }
     
     
     render() {
@@ -111,44 +135,49 @@ class ViewCarList extends Component {
           />
         }
 
-        const { totalCar, cars } = this.state;
+        const { cars, role } = this.state;
 
         return (
-        <>
-        <Navbar/>
-        <div class="main">
-            {cars &&
-            <div>
-              <h1>View Car List</h1>
-              <label>
-                <div> Total Cars owned: { cars.length } </div>
-              </label>
-              <table className="table table-bordered">
-                <thead className="table-dark">
-                  <tr>
-                      <th>Car Vin</th>
-                      <th>Model</th>
-                      <th></th>
-                      <th></th>
-                      <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cars.map(car =>
-                  <tr key={car.carVin}>
-                      <td>{car.carVin}</td>
-                      <td>{car.carModel}</td>
-                      <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
-                      <td><Link  to={`/listCar/${car.carVin}`}  className="btn btn-success">List/Unlist</Link></td>
-                      <td><Link  to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link></td>
-                  </tr>
-                  )}
-                </tbody>
-              </table>
+          <>
+            <Navbar/>
+            <div class="main">
+                {cars &&
+                <div>
+                  { (role === 'Manufacturer') &&
+                    <h1>View list of cars manufactured</h1>
+                  }
+                  { role === 'Owner' &&
+                    <h1>View list of cars owned</h1>
+                  }
+                  <label>
+                    <div> Total Cars: { cars.length } </div>
+                  </label>
+                  <table className="table table-bordered">
+                    <thead className="table-dark">
+                      <tr>
+                          <th>Car Vin</th>
+                          <th>Model</th>
+                          <th></th>
+                          <th></th>
+                          <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {cars.map(car =>
+                      <tr key={car.carVin}>
+                          <td>{car.carVin}</td>
+                          <td>{car.carModel}</td>
+                          <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
+                          <td><Link  to={`/listCar/${car.carVin}`}  className="btn btn-success">List/Unlist</Link></td>
+                          <td><Link  to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link></td>
+                      </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+                }
             </div>
-            }
-        </div>
-      </>
+          </>
     )
   }
 }
