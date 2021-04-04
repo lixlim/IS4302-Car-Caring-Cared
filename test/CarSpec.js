@@ -361,7 +361,7 @@ contract('Car', function (accounts) {
             carInstance.addServiceRecord(vin1, serviceRecord2, {
                 from: workshopAddress1
             }),
-            "This workshop is not auth to service"
+            "This workshop is not authorised to add a service record to this car."
         );
     });
 
