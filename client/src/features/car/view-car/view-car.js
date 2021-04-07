@@ -7,6 +7,13 @@ class ViewCar extends Component {
     super();
     this.state = {prevOwnerList: [], serviceRecordList: []};
   }
+
+  thousands_separators(num) {
+    let num_parts = num.toString().split(".");
+    num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num_parts.join(".");
+  }
+  
   componentDidMount(){
     //get all prev owners' business name and UEN
     const prevOwnerList = this.props.carRecord.ownersList.filter(owner => owner !== this.props.carRecord.currOwner);
@@ -78,7 +85,7 @@ class ViewCar extends Component {
         <div class="car-details-container">
           <h5>Car information</h5>
           <div><strong>Car Model: </strong> {this.props.carRecord.carModel}</div> 
-          {this.props.carRecord.carPrice && <div><strong>Car Price: </strong>${this.props.carRecord.carPrice}</div>}
+          {this.props.carRecord.carPrice && <div><strong>Car Price: </strong>${this.thousands_separators(this.props.carRecord.carPrice)}</div>}
           <div><strong>Car Owner Address: </strong> {this.props.carRecord.currOwner}</div> 
           {this.props.carRecord.email && <div><strong>Car Owner Email: </strong>{this.props.carRecord.email}</div>}
 
