@@ -60,8 +60,13 @@ class CreateServiceRecord extends Component {
         })
       }
     } catch (er) {
-      this.setState({error: er});
-      console.log(er)
+      let data = JSON.parse(er.message.slice(0,-1).slice(er.message.indexOf("{"))).value.data.data
+      let error = data[Object.keys(data)[0]].reason;
+      console.log(data)
+      this.setState({
+        formSubmission: false,
+        error: error
+      })
     }
   }
 
@@ -131,15 +136,15 @@ class CreateServiceRecord extends Component {
               </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
-            {this.state.formSubmission && <div class="alert alert-success" role="alert">
-                The service record is updated successfully!
-              </div>
-              }
             {this.state.error && <div class="alert alert-danger" role="alert">
-              Error creating a service record.
+              {this.state.error}
             </div>
             }
+            {this.state.formSubmission && <div class="alert alert-success" role="alert">
+              The service record is created successfully!
+            </div>
+            }
+            </form>
           </div>    
       </div>
     </>

@@ -21,7 +21,7 @@ contract CarNetwork {
     }
     
     function register(address newUserAddress, string memory newRole) public onlyAdmin(){
-        require(!userExistMap[newUserAddress], "User already registered in system");
+        require(!userExistMap[newUserAddress], "User already registered in system.");
         user memory newUser = user(
             ""
         );
@@ -51,7 +51,7 @@ contract CarNetwork {
     }
 
     function checkRole(address checkAddress, string memory userRole) public view returns(bool) {
-        require(userExistMap[checkAddress], "User not registered in system");
+        require(userExistMap[checkAddress], "User not registered in system.");
         if (keccak256(abi.encodePacked((userMap[checkAddress].role))) == keccak256(abi.encodePacked((userRole)))) {
             return true;
         } else {
@@ -60,7 +60,7 @@ contract CarNetwork {
     }
 
     function returnRoleWithAccount(address checkAddress) public view returns(string memory) {
-        require(userExistMap[checkAddress], "User not registered in system");
+        require(userExistMap[checkAddress], "User not registered in system.");
         return userMap[checkAddress].role;
     }
 

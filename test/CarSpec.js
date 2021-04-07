@@ -25,17 +25,17 @@ contract('Car', function (accounts) {
     const vinList2 = [vin1, vin2, vin3];
     const newCarServiceRecord1 = {
         createdBy: manufacturerAddress,
-        createdOn: "01/01/21",
+        createdOn: "2021-03-01 11:26:24",
         comment: "create car, and whatever else comment is to be added by the manufacturer"
     };
     const serviceRecord1 = {
         createdBy: workshopAddress1,
-        createdOn: "02/02/21",
+        createdOn: "2021-03-20 15:39:57",
         comment: "This comment is created workshopAddress1. serviceRecord1. Any text goes here"
     };
     const serviceRecord2 = {
         createdBy: workshopAddress1,
-        createdOn: "03/03/21",
+        createdOn: "2021-04-01 12:08:44",
         comment: "This comment is created workshopAddress1. serviceRecord2. Any text goes here"
     };
     const newCarServiceRecord1Response = [
@@ -104,7 +104,7 @@ contract('Car', function (accounts) {
             carInstance.createCar(vin1, carModel1, newCarServiceRecord1,{
                     from: ownerAddress1
                 }),
-            "You do not have the access right"
+                "This action can only be performed by specified permissioned roles."
         );
     });
 
@@ -131,7 +131,7 @@ contract('Car', function (accounts) {
             carInstance.transferCar(vin1, ownerAddress1, {
                 from: manufacturerAddress
             }),
-            "Vin number does not exist"
+            "VIN number does not exist."
         );
     });
 
@@ -144,7 +144,7 @@ contract('Car', function (accounts) {
             carInstance.transferCar(vin1, ownerAddress1, {
                 from: ownerAddress2
             }),
-            "Require car's current owner"
+            "This action can only be performed by the car's current owner."
         );
     });
 
@@ -157,7 +157,89 @@ contract('Car', function (accounts) {
             carInstance.transferCar(vin1, ownerAddress2, {
                 from: ownerAddress1
             }),
-            "Require car's current owner"
+            "This action can only be performed by the car's current owner."
+        );
+    });
+
+    it("Auth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+
+        var result1 = await carInstance.authWorkshop(vin1, workshopAddress1, {
+            from: manufacturerAddress
+        });
+        truffleAssert.eventEmitted(result1, 'AuthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.workshop == workshopAddress1 &&
+                ev.auth == true);
+        });
+    });
+
+    it("Auth workshop should fail when already auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+
+        await truffleAssert.reverts(
+            carInstance.authWorkshop(vin1, workshopAddress1, {
+                from: manufacturerAddress
+            }),
+            "Car already authorised to a workshop."
+        );
+    });
+
+    it("Unauth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+      
+        var result1 = await carInstance.unAuthWorkshop(vin1, {
+            from: manufacturerAddress
+        });
+        truffleAssert.eventEmitted(result1, 'UnauthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.auth == false);
+        });
+    });
+
+    it("Unauth workshop should fail when no workshop auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+
+        await truffleAssert.reverts(
+            carInstance.unAuthWorkshop(vin1, {
+                from: manufacturerAddress
+            }),
+            "Car is not authorised to any workshop."
+        );
+    });
+
+    it("Get auth workshop should work", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+      
+        var result1 = await carInstance.getAuthWorkshop(vin1, {
+            from: manufacturerAddress
+        });
+        assert.strictEqual(result1, workshopAddress1, "auth workshop address did not match");
+    });
+
+    it("Get auth workshop should fail no workshop auth-ed", async () => {
+        await registerManufacturer();
+        await createCar1();
+        await registerWorkshop();
+    
+        await truffleAssert.reverts(
+            carInstance.getAuthWorkshop(vin1, {
+                from: manufacturerAddress
+            }),
+            "Car is not authorised to any workshop."
         );
     });
 
@@ -198,6 +280,10 @@ contract('Car', function (accounts) {
       
         var result1 = await carInstance.unAuthWorkshop(vin1, {
             from: manufacturerAddress
+        });
+        truffleAssert.eventEmitted(result1, 'UnauthWorkshop', (ev) => {
+            return (ev.vin == vin1 &&
+                ev.auth == false);
         });
         truffleAssert.eventEmitted(result1, 'UnauthWorkshop', (ev) => {
             return (ev.vin == vin1 &&
@@ -264,6 +350,21 @@ contract('Car', function (accounts) {
         });
     });
 
+    it("Workshop add 2nd service record should fail", async () => {
+        await registerManufacturer();
+        await registerWorkshop();
+        await createCar1();
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
+        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+
+        await truffleAssert.reverts(
+            carInstance.addServiceRecord(vin1, serviceRecord2, {
+                from: workshopAddress1
+            }),
+            "This workshop is not authorised to add a service record to this car."
+        );
+    });
+
     it("Add service records should fail when not auth-ed", async () => {
         await registerManufacturer();
         await registerWorkshop();
@@ -273,7 +374,7 @@ contract('Car', function (accounts) {
             carInstance.addServiceRecord(vin1, serviceRecord1, {
                 from: workshopAddress1
             }),
-            "This workshop is not auth to service"
+            "This workshop is not authorised to add a service record to this car."
         );
     });
 
@@ -413,7 +514,7 @@ contract('Car', function (accounts) {
             carInstance.getManufacturedCarsList( {
                 from: ownerAddress1
             }),
-            "You do not have the access right"
+            "This action can only be performed by specified permissioned roles."
         );
     });
 
@@ -423,6 +524,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
 
         var result = await carInstance.getCarServiceRecordByVin(vin1,{
@@ -441,6 +543,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         await registerOwner1();
         await transferCar(vin1, manufacturerAddress, ownerAddress1);
@@ -463,6 +566,7 @@ contract('Car', function (accounts) {
         await createCar1();
         await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
+        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
         await addServiceRecord(vin1, workshopAddress1, serviceRecord2);
         var carMarketInstance = await CarMarket.new(carInstance.address);
 
@@ -488,23 +592,19 @@ contract('Car', function (accounts) {
             carInstance.getCarByVin(vin3, {
                 from: workshopAddress1
             }),
-            "Vin number does not exist"
+            "VIN number does not exist."
         );
     });
 
     it("getCarByVin should fail when called by non-registered", async () => {
         await registerManufacturer();
-        await registerWorkshop();
-        await createCar2();
         await createCar1();
-        await authWorkshop(vin1, manufacturerAddress, workshopAddress1);
-        await addServiceRecord(vin1, workshopAddress1, serviceRecord1);
 
         await truffleAssert.reverts(
             carInstance.getCarByVin(vin1, {
                 from: ownerAddress1
             }),
-            "User not registered in system"
+            "User not registered in system."
         );
     });
 
