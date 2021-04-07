@@ -96,6 +96,13 @@ class Marketplace extends Component {
     }
   };
 
+  thousands_separators(num) {
+    let num_parts = num.toString().split(".");
+    num_parts[0] = num_parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return num_parts.join(".");
+  }
+
+
   loadListedCars = async() => {
     try {
       const { accounts, carMarket, listedCars } = this.state;
@@ -113,7 +120,7 @@ class Marketplace extends Component {
               const processedCar = {
                 carModel: car.carModel,
                 carOwner: car.carOwner,
-                carPrice: car.carPrice,
+                carPrice: this.thousands_separators(car.carPrice),
                 carVin: car.carVin,
                 email: userAccount.email
               };
