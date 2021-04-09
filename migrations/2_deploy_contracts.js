@@ -62,7 +62,7 @@ module.exports = function (deployer, network, accounts) {
     comment: "Completion Inspection Certificate (CIC) issued in Bremen, Germany."
   };
   const newCarServiceRecord6 = {
-    createdBy: manufacturerAddress1,
+    createdBy: manufacturerAddress2,
     createdOn: "2020-09-08 10:59:00",
     comment: "Completion Inspection Certificate (CIC) issued in Munich, Germany."
   };
