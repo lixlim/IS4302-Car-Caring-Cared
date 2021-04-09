@@ -152,6 +152,11 @@ contract Car {
         emit UnauthWorkshop(vin, workshopAuthExistMap[vin]);
     }
 
+    function addImportRecord(string memory vin, serviceRecord memory newServiceRecord) 
+    public carExist(vin) onlyRole("Manufacturer") onlyCurrOwner(vin){   
+        internalAddServiceRecord(vin, newServiceRecord);
+    }
+
     function getOwnedCarsList()
     public view userExist(msg.sender) returns (simplifiedCar[] memory) {
         string[] memory vinList = ownerToCarsMap[msg.sender];

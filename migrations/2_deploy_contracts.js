@@ -38,72 +38,91 @@ module.exports = function (deployer, network, accounts) {
 
   const newCarServiceRecord1 = {
     createdBy: manufacturerAddress1,
-    createdOn: "2021-03-01 11:26:24",
-    comment: "create car, Written by : Merc. Other text and information"
+    createdOn: "2020-12-01 11:26:24",
+    comment: "Completion Inspection Certificate (CIC) issued in Berlin, Germany."
   };
   const newCarServiceRecord2 = {
     createdBy:manufacturerAddress1,
     createdOn: "2020-07-10 04:48:17",
-    comment: "create car, Written by : Merc. Other text and information"
+    comment: "Completion Inspection Certificate (CIC) issued in Hamburg, Germany."
   };
   const newCarServiceRecord3 = {
     createdBy: manufacturerAddress1,
-    createdOn: "2021-03-01 14:26:24",
-    comment: "create car, Written by : Merc. Other text and information"
+    createdOn: "2020-12-07 14:26:24",
+    comment: "Completion Inspection Certificate (CIC) issued in Rastatt, Germany."
   };
   const newCarServiceRecord4 = {
     createdBy: manufacturerAddress1,
-    createdOn: "2021-01-09 23:17:51",
-    comment: "create car, Written by : Merc. Other text and information"
+    createdOn: "2020-11-09 23:17:51",
+    comment: "Completion Inspection Certificate (CIC) issued in Berlin, Germany."
   };
   const newCarServiceRecord5 = {
     createdBy: manufacturerAddress1,
-    createdOn: "2021-03-02 11:26:24",
-    comment: "create car, Written by : Merc. Other text and information"
+    createdOn: "2020-09-02 11:26:24",
+    comment: "Completion Inspection Certificate (CIC) issued in Bremen, Germany."
   };
   const newCarServiceRecord6 = {
     createdBy: manufacturerAddress1,
     createdOn: "2020-09-08 10:59:00",
-    comment: "create car, Written by : Merc. Other text and information"
+    comment: "Completion Inspection Certificate (CIC) issued in Munich, Germany."
   };
   const newCarServiceRecord7 = {
     createdBy: manufacturerAddress2,
     createdOn: "2020-09-08 09:59:23",
-    comment: "create car, Written by : BMW. Other text and information"
+    comment: "Completion Inspection Certificate (CIC) issued in Wackersdorf, Germany."
   };
   const newCarServiceRecord8 = {
     createdBy: manufacturerAddress2,
     createdOn: "2020-09-08 03:59:53",
-    comment: "create car, Written by : BMW. Other text and information"
+    comment: "Completion Inspection Certificate (CIC) issued in Munich, Germany."
   };
   const newCarServiceRecord9 = {
     createdBy: manufacturerAddress2,
     createdOn: "2020-09-08 02:59:33",
-    comment: "create car, Written by : BMW. Other text and information"
+    comment: "Completion Inspection Certificate (CIC) issued in Berlin, Germany."
   };
   const newCarServiceRecord10 = {
     createdBy: manufacturerAddress2,
-    createdOn: "2021-01-08 12:27:45",
-    comment: "create car, Written by : BMW. Other text and information"
+    createdOn: "2020-11-08 12:27:45",
+    comment: "Completion Inspection Certificate (CIC) issued in Leipzig, Germany."
+  };
+
+  const importRecord1 = {
+    createdBy: manufacturerAddress1,
+    createdOn: "2021-01-23 15:39:57",
+    comment: "Successfully imported into Singapore."
+  };
+
+  const importRecord2 = {
+    createdBy: manufacturerAddress2,
+    createdOn: "2021-01-22 13:10:12",
+    comment: "Successfully imported into Singapore."
   };
 
   const serviceRecord1 = {
     createdBy: workshopAddress1,
     createdOn: "2021-03-20 15:39:57",
-    comment: "This comment is created workshopAddress1. serviceRecord1. Any text goes here"
+    comment: "Changed engine oil and oil filter. Lubricated chassis."
   };
 
   const serviceRecord2 = {
     createdBy: workshopAddress1,
     createdOn: "2021-04-01 12:08:44",
-    comment: "This comment is created workshopAddress1. serviceRecord2. Any text goes here"
+    comment: "Changed brake pads and tuned engine. Replaced air filter."
   };
 
   const serviceRecord3 = {
     createdBy: workshopAddress2,
-    createdOn: "2021-04-01 12:08:44",
-    comment: "This comment is created workshopAddress2. serviceRecord3. Any text goes here"
+    createdOn: "2021-04-02 12:08:44",
+    comment: "Engine and exhaust modification. Wheel alignment. Flushed cooling system"
   };
+
+  const serviceRecord4 = {
+    createdBy: workshopAddress2,
+    createdOn: "2021-04-09 11:10:23",
+    comment: "Changed transmission fluid. Added antifreeze. Replaced windscreen and side mirror."
+  };
+  
   // #endregion
 
   deployer.then(() => {
@@ -128,31 +147,61 @@ module.exports = function (deployer, network, accounts) {
     CarInstance.createCar(vin1, carModel1, newCarServiceRecord1, {
       from: manufacturerAddress1
     });
+    CarInstance.addImportRecord(vin1, importRecord1, {
+      from: manufacturerAddress1
+    });
     CarInstance.createCar(vin2, carModel2, newCarServiceRecord2, {
+      from: manufacturerAddress1
+    });
+    CarInstance.addImportRecord(vin2, importRecord1, {
       from: manufacturerAddress1
     });
     CarInstance.createCar(vin3, carModel3, newCarServiceRecord3, {
       from: manufacturerAddress1
     });
+    CarInstance.addImportRecord(vin3, importRecord1, {
+      from: manufacturerAddress1
+    });
     CarInstance.createCar(vin4, carModel4, newCarServiceRecord4, {
+      from: manufacturerAddress1
+    });
+    CarInstance.addImportRecord(vin4, importRecord1, {
       from: manufacturerAddress1
     });
     CarInstance.createCar(vin5, carModel5, newCarServiceRecord5, {
       from: manufacturerAddress1
     });
+    CarInstance.addImportRecord(vin5, importRecord1, {
+      from: manufacturerAddress1
+    });
     CarInstance.createCar(vin6, carModel6, newCarServiceRecord6, {
+      from: manufacturerAddress2
+    });
+    CarInstance.addImportRecord(vin6, importRecord2, {
       from: manufacturerAddress2
     });
     CarInstance.createCar(vin7, carModel7, newCarServiceRecord7, {
       from: manufacturerAddress2
     });
+    CarInstance.addImportRecord(vin7, importRecord2, {
+      from: manufacturerAddress2
+    });
     CarInstance.createCar(vin8, carModel8, newCarServiceRecord8, {
+      from: manufacturerAddress2
+    });
+    CarInstance.addImportRecord(vin8, importRecord2, {
       from: manufacturerAddress2
     });
     CarInstance.createCar(vin9, carModel9, newCarServiceRecord9, {
       from: manufacturerAddress2
     });
+    CarInstance.addImportRecord(vin9, importRecord2, {
+      from: manufacturerAddress2
+    });
     CarInstance.createCar(vin10, carModel10, newCarServiceRecord10, {
+      from: manufacturerAddress2
+    });
+    CarInstance.addImportRecord(vin10, importRecord2, {
       from: manufacturerAddress2
     });
     // #endregion
@@ -191,7 +240,7 @@ module.exports = function (deployer, network, accounts) {
     CarInstance.authWorkshop(vin1, workshopAddress2, {
       from: ownerAddress1
     });
-    CarInstance.addServiceRecord(vin1, serviceRecord3, {
+    CarInstance.addServiceRecord(vin1, serviceRecord4, {
       from: workshopAddress2
     });
 
@@ -206,6 +255,13 @@ module.exports = function (deployer, network, accounts) {
       from: ownerAddress3
     });
     CarInstance.addServiceRecord(vin3, serviceRecord3, {
+      from: workshopAddress2
+    });
+
+    CarInstance.authWorkshop(vin4, workshopAddress2, {
+      from: ownerAddress3
+    });
+    CarInstance.addServiceRecord(vin4, serviceRecord3, {
       from: workshopAddress2
     });
     // #endregion
