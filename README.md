@@ -29,10 +29,10 @@ For demonstration purposes, below is a list of predefined roles for each account
 
 The password for all accounts are `12345678`.
 
-> **Account 2** - Car owner - Charles 
+> **Account 2** - Car owner
 > buyer1@gmail.com
 > 
-> **Account 5** - Car owner - Adam 
+> **Account 5** - Car owner
 > buyer4@gmail.com
 > 
 > **Account 6** - Car manufacturer  
