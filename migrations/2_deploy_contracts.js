@@ -264,6 +264,41 @@ module.exports = function (deployer, network, accounts) {
     CarInstance.addServiceRecord(vin4, serviceRecord3, {
       from: workshopAddress2
     });
+
+    //populate addresses in a car, created by manufacturerAddress2
+    //transfer 1 car to ownerAddress1
+    CarInstance.transferCar(vin10, ownerAddress1 , {
+      from: manufacturerAddress2
+    });
+    //transfer 1 car to ownerAddress2 
+    CarInstance.transferCar(vin10, ownerAddress2, {
+      from: ownerAddress1
+    });
+    //transfer 1 car to ownerAddress3 
+    CarInstance.transferCar(vin10, ownerAddress3, {
+      from: ownerAddress2
+    });
+    //transfer 1 car to ownerAddress4
+    CarInstance.transferCar(vin10, ownerAddress4, {
+      from: ownerAddress3
+    });
+    //transfer 1 car to manufacturerAddress1
+    CarInstance.transferCar(vin10, manufacturerAddress1, {
+      from: ownerAddress4
+    });
+    //transfer 1 car to dealerAddress1
+    CarInstance.transferCar(vin10, dealerAddress1, {
+      from: manufacturerAddress1
+    });
+    //transfer 1 car to workshopAddress1
+    CarInstance.transferCar(vin10, workshopAddress1, {
+      from: dealerAddress1
+    });
+    //transfer 1 car to workshopAddress1
+    CarInstance.transferCar(vin10, workshopAddress2, {
+      from: workshopAddress1
+    });
+          
     // #endregion
     
     console.log("CarInstance @ " + CarInstance.address);
@@ -291,9 +326,6 @@ module.exports = function (deployer, network, accounts) {
     });
 
     CarMarketInstance.list(vin9, 155800, {
-      from: manufacturerAddress2
-    });
-    CarMarketInstance.list(vin10, 155800, {
       from: manufacturerAddress2
     });
     // #endregion
