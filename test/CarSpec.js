@@ -387,11 +387,11 @@ contract('Car', function (accounts) {
             from: manufacturerAddress
         });
         assert.deepEqual(result[0],
-            [carModel1, vin1],
+            [carModel1, vin1, manufacturerAddress],
             "Does not match owner's currently owned car"
         );
         assert.deepEqual(result[1],
-            [carModel2, vin2],
+            [carModel2, vin2, manufacturerAddress],
             "Does not match owner's currently owned car"
         );
         assert.strictEqual(result.length,
@@ -410,7 +410,7 @@ contract('Car', function (accounts) {
             from: ownerAddress1
         });
         assert.deepEqual(result[0],
-            [carModel1, vin1],
+            [carModel1, vin1, ownerAddress1], 
             "Does not match owner's currently owned car"
         );
         assert.strictEqual(result.length,
@@ -425,39 +425,7 @@ contract('Car', function (accounts) {
             "Does not match owner's currently owned cars"
         )
     });
-
-    it("Get manufactured car list from manufacturer address after ownership transfer should work", async () => {
-        await registerManufacturer();
-        await registerOwner1();
-        await createCar1();
-        await createCar2();
-        await transferCar(vin1, manufacturerAddress, ownerAddress1);
-
-        var result1 = await carInstance.getOwnedCarsList({
-            from: manufacturerAddress
-        }); 
-        assert.deepEqual(result1[0],
-            [carModel2, vin2],
-            "Does not match manufacturer's previously manufactured car"
-        );
-        assert.strictEqual(result1.length,
-            1,
-            "Does not match manufacturer's previously manufactured car"
-        );
-
-        var result2 = await carInstance.getOwnedCarsList({
-            from: ownerAddress1
-        });
-        assert.deepEqual(result2[0],
-            [carModel1, vin1],
-            "Does not match manufacturer's previously manufactured car"
-        );
-        assert.strictEqual(result2.length,
-            1,
-            "Number of cars return doesn't match"
-        );
-    });
-
+    
     it("getManufacturedCarsList should work", async () => {
         await registerManufacturer();
         await createCar1();
@@ -467,11 +435,11 @@ contract('Car', function (accounts) {
             from: manufacturerAddress
         });
         assert.deepEqual(result[0],
-            [carModel1, vin1],
+            [carModel1, vin1, manufacturerAddress],
             "Does not match manufacturer's previously manufactured car details"
         );
         assert.deepEqual(result[1],
-            [carModel2, vin2],
+            [carModel2, vin2, manufacturerAddress],
             "Does not match manufacturer's previously manufactured car details"
         );
         assert.strictEqual(result.length,
@@ -491,11 +459,11 @@ contract('Car', function (accounts) {
             from: manufacturerAddress
         });
         assert.deepEqual(result[0],
-            [carModel1, vin1],
+            [carModel1, vin1, ownerAddress1],
             "Does not match manufacturer's previously manufactured car details"
         );
         assert.deepEqual(result[1],
-            [carModel2, vin2],
+            [carModel2, vin2, manufacturerAddress],
             "Does not match manufacturer's previously manufactured car details"
         );
         assert.strictEqual(result.length,

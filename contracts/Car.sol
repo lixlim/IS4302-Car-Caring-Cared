@@ -37,6 +37,7 @@ contract Car {
     struct simplifiedCar {
         string carModel;
         string carVin;
+        address currOwner;
     }
 
     event CreateCar(string vin, string carModel, address manufacturer, uint numOwner);
@@ -164,7 +165,8 @@ contract Car {
         for (uint256 i = 0; i < vinList.length; i++) {
             carList[i] = simplifiedCar({
                 carModel: carMap[vinList[i]].carModel,
-                carVin: vinList[i]
+                carVin: vinList[i],
+                currOwner: getCurrentOwner(vinList[i])
             });
         }
         return carList;
@@ -177,7 +179,8 @@ contract Car {
         for (uint256 i = 0; i < vinList.length; i++) {
             carList[i] = simplifiedCar({
                 carModel: carMap[vinList[i]].carModel,
-                carVin: vinList[i]
+                carVin: vinList[i],
+                currOwner: getCurrentOwner(vinList[i])
             });
         }
         return carList;
