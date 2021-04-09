@@ -110,10 +110,10 @@ class App extends Component {
     //manufacturer1, dealer, manufacturer2, owner, workshop
     const dbAccounts = [
       'UQP6vtNA0uaXva1XK967mjw0gJm2', //manufacturer2
-      'tKzSuApBmffBzvoOVJb7oAwyEiy2', //ownerAddress1
-      '5KeM3N5akxTJPku1QAESVfRZkPH3', //ownerAddress2
-      '7IWlFDRZumfl9Rqxpj1MsYcXAmC3', //ownerAddress3
-      'jiw9vaFR6XU3zVdW58tDeLlG7Pl2', //ownerAddress4
+      'tWK254lbkQTxn2ZCo12dwuRkc5w2', //ownerAddress1
+      '0sM6bnlcw0NuMtNpeCdYiZorp1s1', //ownerAddress2
+      'owOGtdYe3FZK4X5M0YdxXw8BCZy2', //ownerAddress3
+      'cbTWVI2sKRg6snb65R5bMJlU79t1', //ownerAddress4
       'ENqGv5bdRTY5VcrGpaEkRvXfixr1', //manufacturerAddress1
       'UNgy2Q7uTRNUtaCEhoz8WyBMC562', //dealerAddress1
       'plSdhfe7dxSuOTVwSzzf57ybel52', //workshopAddress1

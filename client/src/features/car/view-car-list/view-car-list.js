@@ -169,8 +169,9 @@ class ViewCarList extends Component {
                           <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
                           <td><Link  to={`/listCar/${car.carVin}`}  className="btn btn-success">List/Unlist</Link></td>
                           <td>
-                            {(car.currOwner === this.state.accounts[0]) &&
-                            <Link to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link>}
+                            {(car.currOwner === this.state.accounts[0]) ?
+                            <Link to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link>:
+                            <p>-</p>}
                             </td>
                       </tr>
                       )}
