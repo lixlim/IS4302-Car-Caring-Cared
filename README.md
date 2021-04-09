@@ -32,11 +32,13 @@ The password for all accounts are `12345678`.
 > **Account 2** - Car owner  
 > buyer1@car.com
 > 
-> **Account 3** - Car manufacturer  
+> **Account 6** - Car manufacturer  
 > manufacturer@car.com  
 > 
-> **Account 4** - Car servicing workshop  
-> workshop@car.com  
->
-> **Account 5** - Car dealer  
+> **Account 8** - Car dealer  
 > dealer@car.com
+> 
+> **Account 9** - Car servicing workshop  
+> workshop@car.com  
+
+
