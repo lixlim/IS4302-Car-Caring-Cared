@@ -15,6 +15,11 @@ import SearchCar from './features/car/search-car/search-car';
 import Marketplace from './features/car/marketplace/marketplace';
 import Register from './features/main/register/register';
 import ListCar from './features/car/list-car/list-car';
+import CarNetworkContract from "./contracts/CarMarket.json";
+import CarContract from './contracts/Car.json';
+import getWeb3 from "./getWeb3";
+import firebase from 'firebase/app';
+
 class App extends Component {
 
   //create dealer in carNetwork
@@ -30,67 +35,103 @@ class App extends Component {
     accounts: null,
   };
 
-  // componentDidMount = async () => {
-  //   try {
-  //     // Get network provider and web3 instance.
-  //     const web3 = await getWeb3();
+  componentDidMount = async () => {
+    try {
+      // Get network provider and web3 instance.
+      const web3 = await getWeb3();
 
-  //     // Use web3 to get the user's accounts.
-  //     const accounts = await web3.eth.getAccounts();
+      // Use web3 to get the user's accounts.
+      const accounts = await web3.eth.getAccounts();
 
-  //     // Get the contract instance.
-  //     const networkId = await web3.eth.net.getId();
-  //     const deployedCarNetwork = CarNetworkContract.networks[networkId];
+      // Get the contract instance.
+      const networkId = await web3.eth.net.getId();
+      const deployedCarNetwork = CarNetworkContract.networks[networkId];
+      const deployedCarContract = CarContract.networks[networkId];
 
-  //     const carNetworkInstance = new web3.eth.Contract(
-  //       CarNetworkContract.abi,
-  //       deployedCarNetwork && deployedCarNetwork.address,
-  //     );
+      const carNetworkInstance = new web3.eth.Contract(
+        CarNetworkContract.abi,
+        deployedCarNetwork && deployedCarNetwork.address,
+      );
 
-  //     // Set web3, accounts, and contract to the state, and then proceed with an
-  //     // example of interacting with the contract's methods.
-  //     this.setState({ web3, accounts, carNetwork: carNetworkInstance }, this.populateData);
-  //     console.log("callFirebase");
-  //   } catch (error) {
-  //     // Catch any errors for any of the above operations.
-  //     alert(
-  //       `Failed to load web3, accounts, or contract. Check console for details.`,
-  //     );
-  //     console.error(error);
-  //   }
-  // };
+      const carContractInstance = new web3.eth.Contract(
+        CarContract.abi,
+        deployedCarContract && deployedCarContract.address,
+      );
 
-  // populateData() {
-  //   if (!sessionStorage.getItem('isDataPopulated')) {
-  //     console.log('test')
-  //     // let isFirebaseSuccess = this.populateDataInFirebase();
-  //     let isBlockchainSuccess = this.populateDataInBlockchain();
-  //     // if (isFirebaseSuccess && isBlockchainSuccess) {
-  //     //   sessionStorage.setItem("isDataPopulated", true)
-  //     // }
-  //     if (isBlockchainSuccess) {
-  //       sessionStorage.setItem("isDataPopulated", true)
-  //     }
-  //   }
-  // }
+      // Set web3, accounts, and contract to the state, and then proceed with an
+      // example of interacting with the contract's methods.
+      this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance }, this.populateData);
+      console.log("callFirebase");
+    } catch (error) {
+      // Catch any errors for any of the above operations.
+      alert(
+        `Failed to load web3, accounts, or contract. Check console for details.`,
+      );
+      console.error(error);
+    }
+  };
 
-  // populateDataInFirebase() {
-  //   console.log("firebase populate")
-  //   //uid in database - admin, buyer1, buyer2, dealer, manufacturer, workshop
-  //   const dbAccounts = ['cgsxJNLAXeVtEN2H8UxxmK271mE2', 'tKzSuApBmffBzvoOVJb7oAwyEiy2', '5KeM3N5akxTJPku1QAESVfRZkPH3', 'UNgy2Q7uTRNUtaCEhoz8WyBMC562', 'ENqGv5bdRTY5VcrGpaEkRvXfixr1', 'plSdhfe7dxSuOTVwSzzf57ybel52'];
-  //   for (let i = 0; i < 6; i++) {
-  //     firebase.database().ref('/accounts/' + dbAccounts[i]).update({
-  //       accountAddress: this.state.accounts[i],
-  //     }, (error) => {
-  //       if (error) {
-  //         alert(dbAccounts[i] + "not initialised");    
-  //         return false;
-  //       } else {
-  //       }
-  //     });
-  //   }
-  //   return true;
-  // }
+  populateData() {
+    if (!sessionStorage.getItem('isDataPopulated')) {
+      console.log('test')
+      // let isFirebaseSuccess = this.populateDataInFirebase();
+      let isFirebaseSuccess = this.populateDataInFirebase();
+      // if (isFirebaseSuccess && isBlockchainSuccess) {
+      //   sessionStorage.setItem("isDataPopulated", true)
+      // }
+      if (isFirebaseSuccess) {
+        sessionStorage.setItem("isDataPopulated", true)
+      }
+    }
+  }
+
+  populateDataInFirebase = async () => {
+    console.log("firebase populate")
+
+    //call contract to get Car with WBAW672030PZ24183
+    try {
+      const { accounts, carContract } = this.state;
+      const carRecord = await carContract.methods.getCarByVin(
+        'WBAW672030PZ24183',
+      ).call({ from: accounts[0] });
+      if (carRecord) {
+        this.setState({
+          viewMore: true,
+          carRecord: { ...carRecord}
+        })
+      }
+    } catch (er) {
+      console.log(er)
+    };
+
+    const accounts = this.state.carRecord;
+    console.log(accounts)
+
+    //manufacturer1, dealer, manufacturer2, owner, workshop
+    const dbAccounts = [
+      'UQP6vtNA0uaXva1XK967mjw0gJm2', //manufacturer2
+      'tWK254lbkQTxn2ZCo12dwuRkc5w2', //ownerAddress1
+      '0sM6bnlcw0NuMtNpeCdYiZorp1s1', //ownerAddress2
+      'owOGtdYe3FZK4X5M0YdxXw8BCZy2', //ownerAddress3
+      'cbTWVI2sKRg6snb65R5bMJlU79t1', //ownerAddress4
+      'ENqGv5bdRTY5VcrGpaEkRvXfixr1', //manufacturerAddress1
+      'UNgy2Q7uTRNUtaCEhoz8WyBMC562', //dealerAddress1
+      'plSdhfe7dxSuOTVwSzzf57ybel52', //workshopAddress1
+      'T5iOlJZKINcC9TYE3ZvVF92U9832', //workshopAddress2
+    ];
+    for (let i = 0; i < 9; i++) {
+      firebase.database().ref('/accounts/' + dbAccounts[i]).update({
+        accountAddress: this.state.carRecord.ownersList[i],
+      }, (error) => {
+        if (error) {
+          alert(dbAccounts[i] + "not initialised");    
+          return false;
+        } else {
+        }
+      });
+    }
+    return true;
+  }
 
   // populateDataInBlockchain = async () => {
   //   console.log("blockchain populate")

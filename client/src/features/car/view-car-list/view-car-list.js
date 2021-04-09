@@ -62,7 +62,7 @@ class ViewCarList extends Component {
       let carList = null;
       console.log("HERE::" + role);
       try {
-        if(role === 'Owner') {
+        if(role === 'Owner'|| role === 'Dealer') {
           console.log('calling owner list');
           carList = await carContract.methods.getOwnedCarsList().call({ from: accounts[0] });
         } else if(role === 'Manufacturer') {
@@ -136,7 +136,6 @@ class ViewCarList extends Component {
         }
 
         const { cars, role } = this.state;
-
         return (
           <>
             <Navbar/>
@@ -169,7 +168,11 @@ class ViewCarList extends Component {
                           <td>{car.carModel}</td>
                           <td><button onClick={() => this.prepareView(car.carVin)} className="btn btn-primary">View more</button></td>
                           <td><Link  to={`/listCar/${car.carVin}`}  className="btn btn-success">List/Unlist</Link></td>
-                          <td><Link  to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link></td>
+                          <td>
+                            {(car.currOwner === this.state.accounts[0]) ?
+                            <Link to={`/authorise-workshop/${car.carVin}`} className="btn btn-secondary">Authorize</Link>:
+                            <p>-</p>}
+                            </td>
                       </tr>
                       )}
                     </tbody>
