@@ -3,7 +3,7 @@ Blockchain-based solution that allows accurate car history records to be stored 
 
 ## Installation 
 1. Clone repository
-1. npm install
+2. npm install
 ```
 npm i
 ```
@@ -13,16 +13,16 @@ npm i
 ```
 ganache-cli -p 8545
 ```
-1. In a separate terminal, navigate to project directory and run 
+2. In a separate terminal, navigate to project directory and run 
 ```
 truffle deploy
 ```
-1. Navigate to `/client` subdirectory of project and run
+3. Navigate to `/client` subdirectory of project and run
 ```
 npm start
 ```
-1. When the metamask extension pop-up appears on the browser, select to connect to Localhost 8545, then proceed to import account using seed phase as provided in the ganache command line.
-1. Allow app access to all accounts.
+4. When the metamask extension pop-up appears on the browser, select to connect to Localhost 8545, then proceed to import account using seed phase as provided in the ganache command line.
+5. Allow app access to all accounts.
 
 ## Account roles and authorisation on app
 For demonstration purposes, below is a list of predefined roles for each account as reflected in metamask extension, and their corresponding login credentials.
