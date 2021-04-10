@@ -125,6 +125,7 @@ class Navbar extends Component {
                         <br />
                         <li className="nav-item" style={{ color: "#ffffff" }}>Your Profile</li>
                         <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Signed in as {obj.currentUser && obj.currentUser.email}</li>
+                        <li className="nav-item" style={{ color: "#ffffff", paddingLeft: "30px" }}>Contact email as {obj.userInfo && obj.userInfo.email}</li>
                         <br />
                         {menu}
 
