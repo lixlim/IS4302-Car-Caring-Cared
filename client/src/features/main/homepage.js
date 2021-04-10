@@ -1,19 +1,20 @@
 import React from "react";
-import { useAuth } from "./authprovider";
 import Navbar from "./navbar";
+import { Link } from 'react-router-dom';
 
 const Homepage = () => {
-
-    const {currentUser} = useAuth();
-    console.log("In homepage");
-    console.log(currentUser);
 
     return (
         <>
             <Navbar />
             <div className="container">
                 <div className='row mb-5' />
-                    <h3>Signed In as {currentUser && currentUser.email} </h3>
+                    <h3 class="text-center">Welcome!</h3>
+                    <h6 class="text-center">This is our blockchain-based solution that keeps all servicing records of a car.</h6>
+                    <br />
+
+                    <div style={{marginRight: '470px', marginLeft: '470px' }}>
+                    <Link  to={`/marketplace`}  className="btn btn-info">Explore Marketplace</Link></div>
             </div>
         </>
     );
