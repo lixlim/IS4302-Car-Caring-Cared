@@ -145,7 +145,7 @@ class ViewCarList extends Component {
                   { (role === 'Manufacturer') &&
                     <h1>View list of cars manufactured</h1>
                   }
-                  { role === 'Owner' &&
+                  { (role === 'Owner' || role === 'Dealer') &&
                     <h1>View list of cars owned</h1>
                   }
                   <label>
