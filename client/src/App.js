@@ -63,7 +63,6 @@ class App extends Component {
 
   populateData() {
     if (!sessionStorage.getItem('isDataPopulated')) {
-      console.log('test')
       let isFirebaseSuccess = this.populateDataInFirebase();
       if (isFirebaseSuccess) {
         sessionStorage.setItem("isDataPopulated", true)
@@ -72,8 +71,6 @@ class App extends Component {
   }
 
   populateDataInFirebase = async () => {
-    console.log("firebase populate")
-
     //call contract to get Car with WBAW672030PZ24183
     try {
       const { accounts, carContract } = this.state;
