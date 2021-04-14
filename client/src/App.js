@@ -21,15 +21,6 @@ import getWeb3 from "./getWeb3";
 import firebase from 'firebase/app';
 
 class App extends Component {
-
-  //create dealer in carNetwork
-  //create manufacturer carNetwork
-  //create workshop in carNetwork
-  //update buyer1 account in Firebase db
-  //update buyer2 account in Firebase db
-  //update dealer account in Firebase db
-  //update manufacturer account in Firebase db
-  //update workshop account in Firebase db
   state = {
     web3: null,
     accounts: null,
@@ -61,7 +52,6 @@ class App extends Component {
       // Set web3, accounts, and contract to the state, and then proceed with an
       // example of interacting with the contract's methods.
       this.setState({ web3, accounts, carContract: carContractInstance, carNetwork: carNetworkInstance }, this.populateData);
-      console.log("callFirebase");
     } catch (error) {
       // Catch any errors for any of the above operations.
       alert(
@@ -74,11 +64,7 @@ class App extends Component {
   populateData() {
     if (!sessionStorage.getItem('isDataPopulated')) {
       console.log('test')
-      // let isFirebaseSuccess = this.populateDataInFirebase();
       let isFirebaseSuccess = this.populateDataInFirebase();
-      // if (isFirebaseSuccess && isBlockchainSuccess) {
-      //   sessionStorage.setItem("isDataPopulated", true)
-      // }
       if (isFirebaseSuccess) {
         sessionStorage.setItem("isDataPopulated", true)
       }
@@ -107,7 +93,6 @@ class App extends Component {
     const accounts = this.state.carRecord;
     console.log(accounts)
 
-    //manufacturer1, dealer, manufacturer2, owner, workshop
     const dbAccounts = [
       'UQP6vtNA0uaXva1XK967mjw0gJm2', //manufacturer2
       'iex0Vm2LlpdokPsXHc8Gp9h11f33', //ownerAddress1
@@ -133,54 +118,6 @@ class App extends Component {
     return true;
   }
 
-  // populateDataInBlockchain = async () => {
-  //   console.log("blockchain populate")
-  //   const { accounts, carNetwork } = this.state;
-  //   //accounts
-  //   const dealerCreated = await carNetwork.methods.register(
-  //     accounts[3],
-  //     "Dealer",
-  //   ).send({ from: accounts[0] });
-
-  //   const manufacturerCreated = await carNetwork.methods.register(
-  //     accounts[4],
-  //     "Manufacturer",
-  //   ).send({ from: accounts[0] });
-
-  //   const workshopCreated = await carNetwork.methods.register(
-  //     accounts[5],
-  //     "Workshop",
-  //   ).send({ from: accounts[0] });
-
-  //   //check if create is successful
-  //   const dealer = await carNetwork.methods.returnRoleWithAccount(
-  //     accounts[3],
-  //   ).call({ from: accounts[0] });
-
-  //   const manufacturer = await carNetwork.methods.returnRoleWithAccount(
-  //     accounts[4],
-  //   ).call({ from: accounts[0] });
-
-  //   const workshop = await carNetwork.methods.returnRoleWithAccount(
-  //     accounts[5],
-  //   ).call({ from: accounts[0] });
-
-  //   console.log("dealer: ", dealer)
-  //   console.log("manufacturer: ", manufacturer)
-  //   console.log("workshop: ", workshop);
-
-  //   return dealerCreated && manufacturerCreated && workshopCreated
-  // }
-
-  // firebase.database().ref('accounts/5KeM3N5akxTJPku1QAESVfRZkPH3').update({
-  //   accountAddress: isAccounts,
-  // }, (error) => {
-  //   if (error) {
-  //     alert("Buyer2 not initialised")
-  //   } else {
-  //     // Data saved successfully!
-  //   }
-  // });
   render() {
 
     return (
